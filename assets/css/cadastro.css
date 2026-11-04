@@ -1,0 +1,443 @@
+/* ==========================================================================
+   NA RÉGUA / BARBEARIA - CADASTRO PAGE STYLES
+   Alinhado com o design system (assets/css/style.css) e mockup de referência
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+    /* Color Palette */
+    --bg-dark: #0A0C10;
+    --bg-dark-secondary: #0F131C;
+    --bg-card: #121622;
+    --bg-card-hover: #171E2D;
+    
+    --bg-input: #171C28;
+    --bg-input-focus: #1C2333;
+    
+    --gold: #E5A93C;
+    --gold-light: #F5BE58;
+    --gold-dark: #C98F28;
+    --gold-glow: rgba(229, 169, 60, 0.25);
+    --gold-glow-lg: rgba(229, 169, 60, 0.45);
+
+    --text-white: #FFFFFF;
+    --text-gray-light: #E2E8F0;
+    --text-gray-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-card: rgba(255, 255, 255, 0.12);
+    --border-input: rgba(255, 255, 255, 0.12);
+    --border-gold: rgba(229, 169, 60, 0.4);
+
+    /* Typography */
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Oswald', 'Plus Jakarta Sans', sans-serif;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    /* Transitions & Shadows */
+    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-card: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(229, 169, 60, 0.08);
+    --shadow-btn: 0 8px 25px -4px rgba(229, 169, 60, 0.35);
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100vh;
+    font-family: var(--font-main);
+    background-color: var(--bg-dark);
+    color: var(--text-gray-light);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 16px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Efeito de iluminação ambiente no fundo */
+body::before {
+    content: '';
+    position: fixed;
+    top: -15%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -15%;
+    right: -10%;
+    width: 55vw;
+    height: 55vw;
+    background: radial-gradient(circle, rgba(25, 34, 52, 0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================================================
+   MAIN - CARD DE CADASTRO
+   ========================================================================== */
+main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 490px;
+    margin: 0 auto;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    animation: fadeInCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    transition: var(--transition);
+}
+
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================================================
+   DIV 1: CABEÇALHO DA MARCA (BRAND)
+   ========================================================================== */
+main > div:nth-of-type(1) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+main > div:nth-of-type(1) .brand-icon,
+main > div:nth-of-type(1) i {
+    font-size: 2.2rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 14px var(--gold-glow));
+    margin-bottom: 6px;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+main > div:nth-of-type(1):hover .brand-icon,
+main > div:nth-of-type(1):hover i {
+    transform: rotate(15deg) scale(1.08);
+}
+
+main > div:nth-of-type(1) h1 {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin: 0;
+}
+
+main > div:nth-of-type(1) span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ==========================================================================
+   DIV 2: TÍTULO DO CADASTRO (CRIE SUA CONTA)
+   ========================================================================== */
+main > div:nth-of-type(2) {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+main > div:nth-of-type(2) h1,
+main > div:nth-of-type(2) h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    line-height: 1.25;
+    font-family: var(--font-main);
+}
+
+main > div:nth-of-type(2) p {
+    color: var(--text-gray-muted);
+    font-size: 0.92rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* ==========================================================================
+   DIV 3: FORMULÁRIO DE CADASTRO
+   ========================================================================== */
+main > div:nth-of-type(3) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Labels */
+main > div:nth-of-type(3) > label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-gray-light);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+/* Wrapper de senha com botão de alternar visibilidade (se houver) */
+.password-field-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-field-wrapper input {
+    margin-bottom: 0 !important;
+}
+
+/* Inputs Gerais */
+main > div:nth-of-type(3) input {
+    width: 100%;
+    height: 46px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    padding: 0 16px;
+    color: var(--text-white);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    outline: none;
+    margin-bottom: 14px;
+    transition: var(--transition);
+}
+
+/* Ícones temáticos em SVG dentro dos inputs (conforme o mockup de referência) */
+/* 1. Nome/Usuário */
+main > div:nth-of-type(3) input#nome {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
+    padding-left: 42px;
+}
+
+/* 2. E-mail */
+main > div:nth-of-type(3) input#email {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
+    padding-left: 42px;
+}
+
+/* 3. CPF */
+main > div:nth-of-type(3) input#cpf {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='5' rx='2'/%3E%3Cline x1='2' x2='22' y1='10' y2='10'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
+    padding-left: 42px;
+}
+
+/* 4. Telefone */
+main > div:nth-of-type(3) input#telefone {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
+    padding-left: 42px;
+}
+
+/* 5. Senha e Confirmar senha */
+main > div:nth-of-type(3) input#senha,
+main > div:nth-of-type(3) input#confirmar {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+    background-size: 18px 18px;
+    padding-left: 42px;
+    padding-right: 44px; /* Espaço para o olho se houver */
+}
+
+/* Foco nos Inputs */
+main > div:nth-of-type(3) input:focus {
+    background-color: var(--bg-input-focus);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+/* Ícones dourados em foco */
+main > div:nth-of-type(3) input#nome:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+}
+
+main > div:nth-of-type(3) input#email:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='16' x='2' y='4' rx='2'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3C/svg%3E");
+}
+
+main > div:nth-of-type(3) input#cpf:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='14' x='2' y='5' rx='2'/%3E%3Cline x1='2' x2='22' y1='10' y2='10'/%3E%3C/svg%3E");
+}
+
+main > div:nth-of-type(3) input#telefone:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z'/%3E%3C/svg%3E");
+}
+
+main > div:nth-of-type(3) input#senha:focus,
+main > div:nth-of-type(3) input#confirmar:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
+}
+
+/* Placeholder */
+main > div:nth-of-type(3) input::placeholder {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+/* Botão de Alternar Senha */
+.btn-toggle-senha {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.btn-toggle-senha:hover {
+    color: var(--gold);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Botão 'Cadastrar' */
+main > div:nth-of-type(3) > button[type="submit"] {
+    width: 100%;
+    height: 48px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    color: #0A0C10;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-btn);
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+main > div:nth-of-type(3) > button[type="submit"]:hover {
+    background: linear-gradient(135deg, #FFD27D 0%, var(--gold-light) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -4px rgba(229, 169, 60, 0.45);
+    color: #000;
+}
+
+main > div:nth-of-type(3) > button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(229, 169, 60, 0.3);
+}
+
+/* Texto 'Já tem uma conta? Faça login' */
+main > div:nth-of-type(3) > p {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-gray-muted);
+    margin: 0;
+}
+
+main > div:nth-of-type(3) > p a {
+    color: var(--gold);
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+    margin-left: 4px;
+}
+
+main > div:nth-of-type(3) > p a:hover {
+    color: var(--gold-light);
+    text-decoration: underline;
+    text-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE (MEDIA QUERIES)
+   ========================================================================== */
+@media (max-width: 520px) {
+    body {
+        padding: 24px 12px;
+    }
+
+    main {
+        padding: 32px 22px;
+    }
+
+    main > div:nth-of-type(1) h1 {
+        font-size: 1.65rem;
+    }
+
+    main > div:nth-of-type(2) h1,
+    main > div:nth-of-type(2) h2 {
+        font-size: 1.25rem;
+    }
+
+    main > div:nth-of-type(3) input {
+        height: 44px;
+        font-size: 0.9rem;
+    }
+}

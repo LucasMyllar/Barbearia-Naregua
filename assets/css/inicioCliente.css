@@ -1,0 +1,753 @@
+/* ==========================================================================
+   NA RÉGUA / BARBEARIA - PAINEL DO CLIENTE (inicioCliente.html)
+   Alinhado com o Design System (style.css, login.css) e o wireframe do cliente
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+    /* Color Palette */
+    --bg-dark: #0A0C10;
+    --bg-dark-secondary: #0F131C;
+    --bg-card: #121622;
+    --bg-card-hover: #171E2D;
+    --bg-card-subtle: rgba(255, 255, 255, 0.02);
+
+    --bg-input: #171C28;
+    --bg-input-focus: #1C2333;
+
+    --gold: #E5A93C;
+    --gold-light: #F5BE58;
+    --gold-dark: #C98F28;
+    --gold-glow: rgba(229, 169, 60, 0.25);
+    --gold-glow-lg: rgba(229, 169, 60, 0.45);
+
+    --text-white: #FFFFFF;
+    --text-gray-light: #E2E8F0;
+    --text-gray-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-card: rgba(255, 255, 255, 0.12);
+    --border-gold: rgba(229, 169, 60, 0.35);
+
+    --danger: #EF4444;
+    --danger-hover: #DC2626;
+    --danger-glow: rgba(239, 68, 68, 0.25);
+
+    /* Typography */
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Oswald', 'Plus Jakarta Sans', sans-serif;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 26px;
+    --radius-full: 9999px;
+
+    /* Transitions & Shadows */
+    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-card: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 0 0 25px -5px rgba(229, 169, 60, 0.06);
+    --shadow-btn: 0 8px 25px -4px rgba(229, 169, 60, 0.35);
+    --shadow-hover: 0 12px 30px -4px rgba(229, 169, 60, 0.45);
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100vh;
+    font-family: var(--font-main);
+    background-color: var(--bg-dark);
+    color: var(--text-gray-light);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout em Grid baseado no wireframe: Sidebar na esquerda, Header no topo, Main no centro */
+body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 72px 1fr;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Efeito de iluminação ambiente no fundo */
+body::before {
+    content: '';
+    position: fixed;
+    top: -15%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -15%;
+    left: 20%;
+    width: 45vw;
+    height: 45vw;
+    background: radial-gradient(circle, rgba(25, 34, 52, 0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================================================
+   BARRA LATERAL / SIDEBAR (SECTION)
+   ========================================================================== */
+body > section,
+.sidebar {
+    grid-area: sidebar;
+    background-color: var(--bg-dark-secondary);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+/* Marca / Logo no topo da barra lateral (Mockup: Círculo com Tesoura + Nome) */
+body > section > div:first-of-type,
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 26px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+}
+
+body > section > div:first-of-type .brand-icon-wrapper,
+.brand-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.15) 0%, rgba(229, 169, 60, 0.03) 70%);
+    border: 1px solid rgba(229, 169, 60, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px -3px var(--gold-glow);
+    transition: var(--transition);
+}
+
+body > section > div:first-of-type:hover .brand-icon-wrapper,
+.sidebar-brand:hover .brand-icon-wrapper {
+    transform: scale(1.06);
+    border-color: var(--gold);
+    box-shadow: 0 0 25px 2px var(--gold-glow-lg);
+}
+
+body > section > div:first-of-type .brand-icon,
+body > section > div:first-of-type i,
+.sidebar-brand .brand-icon {
+    font-size: 1.8rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 10px var(--gold-glow));
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body > section > div:first-of-type:hover .brand-icon,
+body > section > div:first-of-type:hover i,
+.sidebar-brand:hover .brand-icon {
+    transform: rotate(15deg);
+}
+
+body > section > div:first-of-type h1,
+.sidebar-brand h1 {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin: 0;
+}
+
+body > section > div:first-of-type span,
+.sidebar-brand span {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Itens de Navegação (Botões Início, Agendamentos, Perfil) */
+body > section > button,
+.sidebar-nav-btn {
+    width: 100%;
+    height: 48px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--text-gray-muted);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 18px;
+    margin-bottom: 8px;
+    transition: var(--transition);
+    text-align: left;
+    position: relative;
+    outline: none;
+}
+
+body > section > button i,
+.sidebar-nav-btn i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--text-dim);
+    transition: var(--transition);
+}
+
+/* Hover nos botões da barra lateral */
+body > section > button:hover,
+.sidebar-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-white);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+body > section > button:hover i,
+.sidebar-nav-btn:hover i {
+    color: var(--gold);
+}
+
+/* Item Ativo - INÍCIO (No rascunho destacado em verde, aqui em Dourado com as cores do projeto) */
+body > section > button:first-of-type,
+body > section > button.active,
+.sidebar-nav-btn.active {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #0A0C10;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 6px 20px -2px var(--gold-glow-lg);
+}
+
+body > section > button:first-of-type i,
+body > section > button.active i,
+.sidebar-nav-btn.active i {
+    color: #0A0C10;
+}
+
+body > section > button:first-of-type:hover,
+body > section > button.active:hover,
+.sidebar-nav-btn.active:hover {
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    transform: translateX(4px);
+    box-shadow: 0 8px 24px -2px var(--gold-glow-lg);
+}
+
+/* Botão Sair - Fixado no rodapé da barra lateral conforme o wireframe */
+body > section > a,
+.sidebar-logout {
+    margin-top: auto;
+    width: 100%;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background-color: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.18);
+    color: #F87171;
+    font-family: var(--font-main);
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 16px;
+    transition: var(--transition);
+}
+
+body > section > a i,
+.sidebar-logout i {
+    font-size: 1rem;
+    transition: transform 0.25s ease;
+}
+
+body > section > a:hover,
+.sidebar-logout:hover {
+    background-color: var(--danger);
+    color: var(--text-white);
+    border-color: var(--danger);
+    box-shadow: 0 6px 20px -3px var(--danger-glow);
+    transform: translateY(-2px);
+}
+
+body > section > a:hover i,
+.sidebar-logout:hover i {
+    transform: translateX(3px);
+}
+
+/* ==========================================================================
+   CABEÇALHO SUPERIOR (HEADER)
+   ========================================================================== */
+header {
+    grid-area: header;
+    background: rgba(15, 19, 28, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+header p {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-gray-muted);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+header p::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--gold);
+}
+
+/* Informações do usuário no canto superior direito do header */
+.header-user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.header-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-gray-light);
+}
+
+.header-user-badge i {
+    color: var(--gold);
+}
+
+/* ==========================================================================
+   CONTEÚDO PRINCIPAL (MAIN)
+   Alinhamento inteligente via CSS Grid:
+   - Linha 1: "NOME" à esquerda, botão "[ AGENDAR ]" à direita (como no desenho)
+   - Linha 2: Card grande "AGENDAMENTOS"
+   ========================================================================== */
+main {
+    grid-area: main;
+    padding: 36px 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    column-gap: 24px;
+    row-gap: 32px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    width: 100%;
+}
+
+/* Título com Nome do Cliente (Topo Esquerdo) */
+main > h1,
+.client-name-title {
+    grid-column: 1;
+    grid-row: 1;
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.15;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0;
+}
+
+main > h1 span.subtitle,
+.client-name-subtitle {
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-gray-muted);
+    letter-spacing: normal;
+    text-transform: none;
+    margin-top: 4px;
+}
+
+/* Botão Agendar (Topo Direito - Conforme Rascunho) */
+main > button[type="submit"],
+main > button.btn-agendar,
+.btn-agendar {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #0A0C10;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 13px 30px;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    box-shadow: var(--shadow-btn);
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    outline: none;
+    white-space: nowrap;
+}
+
+main > button[type="submit"] i,
+main > button.btn-agendar i,
+.btn-agendar i {
+    font-size: 1.05rem;
+    color: #0A0C10;
+}
+
+main > button[type="submit"]:hover,
+main > button.btn-agendar:hover,
+.btn-agendar:hover {
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+main > button[type="submit"]:active,
+main > button.btn-agendar:active,
+.btn-agendar:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px -2px var(--gold-glow);
+}
+
+/* ==========================================================================
+   CARD DE AGENDAMENTOS (CONTAINER GRANDE DO WIREFRAME)
+   ========================================================================== */
+main > div,
+.card-agendamentos {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    min-height: 460px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    animation: fadeInCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main > div:hover,
+.card-agendamentos:hover {
+    border-color: rgba(229, 169, 60, 0.3);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -4px rgba(229, 169, 60, 0.12);
+}
+
+/* Borda superior sutil com brilho dourado */
+main > div::before,
+.card-agendamentos::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
+}
+
+/* Cabeçalho do Card (Título "AGENDAMENTOS" do rascunho) */
+.card-agendamentos-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 22px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-agendamentos-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-agendamentos-title i {
+    color: var(--gold);
+    font-size: 1.3rem;
+}
+
+.card-agendamentos-badge {
+    background: rgba(229, 169, 60, 0.1);
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Estado Vazio de Agendamentos ("Nenhum agendamento realizado até o momento!") */
+.empty-state-wrapper,
+main > div:not(.card-agendamentos-header) {
+    /* container centralizado */
+}
+
+.empty-state-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 20px;
+    margin: auto;
+}
+
+/* Parágrafo estilizado conforme o arquivo HTML original */
+main > div p,
+.empty-state-text {
+    color: var(--text-white);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-top: 18px;
+    line-height: 1.4;
+    max-width: 500px;
+}
+
+/* Círculo do ícone do estado vazio */
+.empty-icon-box {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.14) 0%, rgba(229, 169, 60, 0.02) 70%);
+    border: 1px solid rgba(229, 169, 60, 0.28);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 2.3rem;
+    box-shadow: 0 0 35px -5px var(--gold-glow);
+    animation: pulseIcon 3s infinite ease-in-out;
+}
+
+@keyframes pulseIcon {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px -5px var(--gold-glow);
+    }
+    50% {
+        transform: scale(1.06);
+        box-shadow: 0 0 40px 2px var(--gold-glow);
+    }
+}
+
+.empty-state-desc {
+    color: var(--text-gray-muted);
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin-top: 8px;
+    max-width: 440px;
+    line-height: 1.5;
+}
+
+.btn-schedule-empty {
+    margin-top: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(229, 169, 60, 0.12);
+    color: var(--gold);
+    border: 1px solid var(--border-gold);
+    padding: 12px 28px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-main);
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-schedule-empty:hover {
+    background: var(--gold);
+    color: #0A0C10;
+    box-shadow: 0 6px 20px -2px var(--gold-glow);
+    transform: translateY(-2px);
+}
+
+.btn-schedule-empty:hover i {
+    color: #0A0C10;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE (TABLETS E SMARTPHONES)
+   ========================================================================== */
+@media (max-width: 960px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        grid-template-areas:
+            "sidebar"
+            "header"
+            "main";
+    }
+
+    body > section,
+    .sidebar {
+        height: auto;
+        position: relative;
+        padding: 20px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    body > section > div:first-of-type,
+    .sidebar-brand {
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    body > section > button,
+    .sidebar-nav-btn {
+        margin-bottom: 6px;
+    }
+
+    body > section > a,
+    .sidebar-logout {
+        margin-top: 14px;
+    }
+
+    header {
+        padding: 14px 24px;
+    }
+
+    main {
+        padding: 28px 24px 40px;
+        row-gap: 24px;
+    }
+
+    main > h1,
+    .client-name-title {
+        font-size: 1.8rem;
+    }
+
+    main > div,
+    .card-agendamentos {
+        padding: 28px 20px;
+        min-height: 380px;
+    }
+}
+
+@media (max-width: 640px) {
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+    }
+
+    main > h1,
+    .client-name-title {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    main > button[type="submit"],
+    main > button.btn-agendar,
+    .btn-agendar {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: stretch;
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    main > div,
+    .card-agendamentos {
+        grid-column: 1;
+        grid-row: 3;
+    }
+}

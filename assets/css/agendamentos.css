@@ -1,0 +1,834 @@
+/* ==========================================================================
+   NA RÉGUA / BARBEARIA - MEUS AGENDAMENTOS (agendamentos.html)
+   Alinhado com o Design System (style.css, login.css, inicioCliente.css)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+    /* Color Palette */
+    --bg-dark: #0A0C10;
+    --bg-dark-secondary: #0F131C;
+    --bg-card: #121622;
+    --bg-card-hover: #171E2D;
+    --bg-card-subtle: rgba(255, 255, 255, 0.03);
+
+    --bg-input: #171C28;
+    --bg-input-focus: #1C2333;
+
+    --gold: #E5A93C;
+    --gold-light: #F5BE58;
+    --gold-dark: #C98F28;
+    --gold-glow: rgba(229, 169, 60, 0.25);
+    --gold-glow-lg: rgba(229, 169, 60, 0.45);
+
+    --text-white: #FFFFFF;
+    --text-gray-light: #E2E8F0;
+    --text-gray-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-card: rgba(255, 255, 255, 0.12);
+    --border-gold: rgba(229, 169, 60, 0.35);
+
+    --success: #10B981;
+    --success-glow: rgba(16, 185, 129, 0.25);
+    --danger: #EF4444;
+    --danger-hover: #DC2626;
+    --danger-glow: rgba(239, 68, 68, 0.25);
+
+    /* Typography */
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Oswald', 'Plus Jakarta Sans', sans-serif;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 26px;
+    --radius-full: 9999px;
+
+    /* Transitions & Shadows */
+    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-card: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 0 0 25px -5px rgba(229, 169, 60, 0.06);
+    --shadow-btn: 0 8px 25px -4px rgba(229, 169, 60, 0.35);
+    --shadow-hover: 0 12px 30px -4px rgba(229, 169, 60, 0.45);
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100vh;
+    font-family: var(--font-main);
+    background-color: var(--bg-dark);
+    color: var(--text-gray-light);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 72px 1fr;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Efeito de iluminação ambiente */
+body::before {
+    content: '';
+    position: fixed;
+    top: -15%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -15%;
+    left: 20%;
+    width: 45vw;
+    height: 45vw;
+    background: radial-gradient(circle, rgba(25, 34, 52, 0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================================================
+   BARRA LATERAL / SIDEBAR
+   ========================================================================== */
+.sidebar {
+    grid-area: sidebar;
+    background-color: var(--bg-dark-secondary);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 26px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.15) 0%, rgba(229, 169, 60, 0.03) 70%);
+    border: 1px solid rgba(229, 169, 60, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px -3px var(--gold-glow);
+    transition: var(--transition);
+}
+
+.sidebar-brand:hover .brand-icon-wrapper {
+    transform: scale(1.06);
+    border-color: var(--gold);
+    box-shadow: 0 0 25px 2px var(--gold-glow-lg);
+}
+
+.brand-icon {
+    font-size: 1.8rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 10px var(--gold-glow));
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-brand:hover .brand-icon {
+    transform: rotate(15deg);
+}
+
+.sidebar-brand h1 {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.sidebar-brand span {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+.sidebar-nav-btn {
+    width: 100%;
+    height: 48px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--text-gray-muted);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 18px;
+    margin-bottom: 8px;
+    transition: var(--transition);
+    text-align: left;
+    outline: none;
+}
+
+.sidebar-nav-btn i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    color: var(--text-dim);
+    transition: var(--transition);
+}
+
+.sidebar-nav-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-white);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.sidebar-nav-btn:hover i {
+    color: var(--gold);
+}
+
+.sidebar-nav-btn.active {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #0A0C10;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 6px 20px -2px var(--gold-glow-lg);
+}
+
+.sidebar-nav-btn.active i {
+    color: #0A0C10;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+    width: 100%;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background-color: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.18);
+    color: #F87171;
+    font-family: var(--font-main);
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 16px;
+    transition: var(--transition);
+}
+
+.sidebar-logout:hover {
+    background-color: var(--danger);
+    color: var(--text-white);
+    border-color: var(--danger);
+    box-shadow: 0 6px 20px -3px var(--danger-glow);
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   CABEÇALHO SUPERIOR (HEADER)
+   ========================================================================== */
+header {
+    grid-area: header;
+    background: rgba(15, 19, 28, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.header-breadcrumb {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-gray-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-breadcrumb a {
+    color: var(--text-gray-muted);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.header-breadcrumb a:hover {
+    color: var(--gold);
+}
+
+.header-breadcrumb .separator {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+}
+
+.header-breadcrumb .current {
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.header-user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.header-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-gray-light);
+}
+
+.header-user-badge i {
+    color: var(--gold);
+}
+
+/* ==========================================================================
+   CONTEÚDO PRINCIPAL (MAIN - MEUS AGENDAMENTOS)
+   ========================================================================== */
+main {
+    grid-area: main;
+    padding: 36px 40px 60px;
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Top bar: Título + Botão Novo Agendamento */
+.agendamentos-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 32px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+    border-radius: var(--radius-full);
+}
+
+.page-subtitle {
+    color: var(--text-gray-muted);
+    font-size: 0.92rem;
+    margin-top: 4px;
+}
+
+.btn-new-appointment {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #0A0C10;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 13px 28px;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    box-shadow: var(--shadow-btn);
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-transform: uppercase;
+    text-decoration: none;
+    outline: none;
+}
+
+.btn-new-appointment:hover {
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+}
+
+/* Stats / Cards de Resumo */
+.stats-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    border-color: rgba(229, 169, 60, 0.3);
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: rgba(229, 169, 60, 0.1);
+    border: 1px solid rgba(229, 169, 60, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-number {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin: 2px 0;
+}
+
+.stat-detail {
+    font-size: 0.78rem;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Tabs de Filtro */
+.appointments-tabs-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 16px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-gray-muted);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    color: var(--text-white);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.tab-btn.active {
+    background: rgba(229, 169, 60, 0.12);
+    border-color: var(--border-gold);
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.tab-counter {
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
+.tab-btn.active .tab-counter {
+    background: var(--gold);
+    color: #0A0C10;
+}
+
+/* ==========================================================================
+   CARDS DE AGENDAMENTOS (LISTAGEM)
+   ========================================================================== */
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Card Próximo / Ativo */
+.appointment-item-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-xl);
+    padding: 26px 30px;
+    box-shadow: var(--shadow-card);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    animation: fadeInCard 0.4s ease both;
+}
+
+@keyframes fadeInCard {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.appointment-item-card:hover {
+    border-color: rgba(229, 169, 60, 0.35);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8), 0 0 30px -5px rgba(229, 169, 60, 0.12);
+}
+
+.appointment-item-card.confirmed {
+    border-left: 4px solid var(--gold);
+}
+
+.appointment-item-card.completed {
+    border-left: 4px solid var(--success);
+    opacity: 0.92;
+}
+
+/* Data em destaque no lado esquerdo do card */
+.appointment-date-badge {
+    background: var(--bg-dark-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 100px;
+}
+
+.date-badge-day {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+}
+
+.date-badge-month {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-white);
+    margin: 4px 0;
+}
+
+.date-badge-time {
+    font-size: 0.8rem;
+    color: var(--text-gray-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Informações do corte */
+.appointment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.appointment-header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.appointment-service-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge.status-confirmed {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.status-confirmed::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34D399;
+    box-shadow: 0 0 8px #34D399;
+}
+
+.status-badge.status-done {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-gray-light);
+    border: 1px solid var(--border-subtle);
+}
+
+.appointment-meta-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    color: var(--text-gray-muted);
+    font-size: 0.88rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.meta-item i {
+    color: var(--gold);
+}
+
+.appointment-price-tag {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold);
+    margin-top: 4px;
+}
+
+/* Ações do Card */
+.appointment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.btn-action-cancel {
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #F87171;
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-action-cancel:hover {
+    background: var(--danger);
+    color: var(--text-white);
+    border-color: var(--danger);
+    box-shadow: 0 4px 15px -2px var(--danger-glow);
+}
+
+.btn-action-reschedule {
+    background: rgba(229, 169, 60, 0.1);
+    border: 1px solid var(--border-gold);
+    color: var(--gold);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-action-reschedule:hover {
+    background: var(--gold);
+    color: #0A0C10;
+    box-shadow: 0 4px 15px -2px var(--gold-glow);
+}
+
+.btn-action-repeat {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-gray-light);
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-action-repeat:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(229, 169, 60, 0.08);
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE
+   ========================================================================== */
+@media (max-width: 960px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        grid-template-areas:
+            "sidebar"
+            "header"
+            "main";
+    }
+
+    .sidebar {
+        height: auto;
+        position: relative;
+        padding: 20px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sidebar-brand {
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    .sidebar-logout {
+        margin-top: 14px;
+    }
+
+    header {
+        padding: 14px 20px;
+    }
+
+    main {
+        padding: 24px 20px 40px;
+    }
+
+    .appointment-item-card {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .appointment-actions {
+        flex-direction: row;
+        align-items: center;
+    }
+}
