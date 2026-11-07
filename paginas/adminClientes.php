@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirAdmin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -9,7 +14,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -54,10 +61,13 @@
                 <i class="fa-solid fa-store"></i>
                 <span>Ver Visão do Cliente</span>
             </a>
-            <a href="login.php" class="sidebar-logout">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Sair do Sistema</span>
-            </a>
+            <form method="POST" action="logout.php" class="form-logout">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                <button type="submit" class="sidebar-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </form>
         </div>
     </section>
 
@@ -86,7 +96,8 @@
         <div class="page-header-row">
             <div>
                 <h1 class="page-title">Base de Clientes & CRM</h1>
-                <p class="page-subtitle">Consulte a frequência de cortes, histórico de visitas e contato direto com seus clientes.</p>
+                <p class="page-subtitle">Consulte a frequência de cortes, histórico de visitas e contato direto com seus
+                    clientes.</p>
             </div>
             <button type="button" class="btn-primary-admin" onclick="openModal('modalNewAppointment')">
                 <i class="fa-solid fa-calendar-plus"></i> Agendar para Cliente
@@ -133,7 +144,8 @@
         <div class="admin-toolbar">
             <div class="search-box" style="width: 320px;">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" placeholder="Buscar por nome, e-mail ou telefone..." oninput="filterTableBySearch(this, '.client-table-row')">
+                <input type="text" class="search-input" placeholder="Buscar por nome, e-mail ou telefone..."
+                    oninput="filterTableBySearch(this, '.client-table-row')">
             </div>
 
             <div style="font-size: 0.88rem; color: var(--text-gray-muted);">
@@ -180,10 +192,12 @@
                             <td>Combo Cabelo + Barba</td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511987654321" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511987654321" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action gold" onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
+                                    <button type="button" class="btn-icon-action gold"
+                                        onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
                                         <i class="fa-regular fa-calendar-plus"></i>
                                     </button>
                                 </div>
@@ -211,10 +225,12 @@
                             <td>Degradê / Fade Navalhado</td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511971238899" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511971238899" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action gold" onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
+                                    <button type="button" class="btn-icon-action gold"
+                                        onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
                                         <i class="fa-regular fa-calendar-plus"></i>
                                     </button>
                                 </div>
@@ -244,10 +260,12 @@
                             <td>Barba Terapia Completa</td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511965442211" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511965442211" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action gold" onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
+                                    <button type="button" class="btn-icon-action gold"
+                                        onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
                                         <i class="fa-regular fa-calendar-plus"></i>
                                     </button>
                                 </div>
@@ -275,10 +293,12 @@
                             <td>Corte Degradê + Acabamento</td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511955551234" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511955551234" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action gold" onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
+                                    <button type="button" class="btn-icon-action gold"
+                                        onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
                                         <i class="fa-regular fa-calendar-plus"></i>
                                     </button>
                                 </div>
@@ -306,10 +326,12 @@
                             <td>Barba Completa</td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511944449988" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511944449988" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action gold" onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
+                                    <button type="button" class="btn-icon-action gold"
+                                        onclick="openModal('modalNewAppointment')" title="Agendar Novo Corte">
                                         <i class="fa-regular fa-calendar-plus"></i>
                                     </button>
                                 </div>
@@ -362,8 +384,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin" onclick="closeModal('modalNewAppointment')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Confirmar Agendamento</button>
+                    <button type="button" class="btn-secondary-admin"
+                        onclick="closeModal('modalNewAppointment')">Cancelar</button>
+                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Confirmar
+                        Agendamento</button>
                 </div>
             </form>
         </div>
@@ -374,4 +398,3 @@
 </body>
 
 </html>
-

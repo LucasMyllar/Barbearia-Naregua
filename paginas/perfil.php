@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirLogin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -44,10 +49,13 @@
             <span>Perfil</span>
         </button>
 
-        <a href="login.php" class="sidebar-logout">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Sair</span>
-        </a>
+        <form method="POST" action="logout.php" class="form-logout">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+            <button type="submit" class="sidebar-logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
+            </button>
+        </form>
     </section>
 
     <!-- Cabeçalho Superior -->
@@ -82,7 +90,8 @@
 
                 <div class="profile-identity-details">
                     <h1>Lucas Silva</h1>
-                    <p><i class="fa-regular fa-envelope"></i> lucas.silva@email.com • <i class="fa-brands fa-whatsapp"></i> (11) 98765-4321</p>
+                    <p><i class="fa-regular fa-envelope"></i> lucas.silva@email.com • <i
+                            class="fa-brands fa-whatsapp"></i> (11) 98765-4321</p>
                     <span class="profile-member-since">Membro da Na Régua desde Outubro de 2024</span>
                 </div>
             </div>
@@ -125,7 +134,8 @@
 
                             <div class="form-group">
                                 <label class="form-label" for="profileEmail">E-mail</label>
-                                <input type="email" id="profileEmail" class="form-input" value="lucas.silva@email.com" required>
+                                <input type="email" id="profileEmail" class="form-input" value="lucas.silva@email.com"
+                                    required>
                             </div>
 
                             <div class="form-group">
@@ -162,17 +172,20 @@
                         <div class="form-grid-2">
                             <div class="form-group full-width">
                                 <label class="form-label" for="currentPassword">Senha Atual</label>
-                                <input type="password" id="currentPassword" class="form-input" placeholder="••••••••" required>
+                                <input type="password" id="currentPassword" class="form-input" placeholder="••••••••"
+                                    required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="newPassword">Nova Senha</label>
-                                <input type="password" id="newPassword" class="form-input" placeholder="Nova senha (mínimo 6 caracteres)" required>
+                                <input type="password" id="newPassword" class="form-input"
+                                    placeholder="Nova senha (mínimo 6 caracteres)" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="confirmPassword">Confirmar Nova Senha</label>
-                                <input type="password" id="confirmPassword" class="form-input" placeholder="Repita a nova senha" required>
+                                <input type="password" id="confirmPassword" class="form-input"
+                                    placeholder="Repita a nova senha" required>
                             </div>
                         </div>
 

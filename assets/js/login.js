@@ -21,20 +21,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Redirecionamento inteligente (Admin vs Cliente)
-    const btnEntrar = document.querySelector('button[type="submit"]');
-    if (btnEntrar) {
-        btnEntrar.addEventListener('click', (e) => {
-            e.preventDefault();
-            const emailInput = document.getElementById('email');
-            const email = emailInput ? emailInput.value.toLowerCase().trim() : '';
-
-            // Se o login for de administrador, encaminha para o painel admin
-            if (email.includes('admin') || email.includes('gestor') || email.includes('gerente')) {
-                window.location.href = 'adminDashboard.php';
-            } else {
-                window.location.href = 'inicioCliente.php';
-            }
-        });
-    }
+    
 });

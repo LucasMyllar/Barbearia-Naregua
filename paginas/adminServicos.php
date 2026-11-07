@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirAdmin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -9,7 +14,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -54,10 +61,13 @@
                 <i class="fa-solid fa-store"></i>
                 <span>Ver Visão do Cliente</span>
             </a>
-            <a href="login.php" class="sidebar-logout">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Sair do Sistema</span>
-            </a>
+            <form method="POST" action="logout.php" class="form-logout">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                <button type="submit" class="sidebar-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </form>
         </div>
     </section>
 
@@ -86,7 +96,8 @@
         <div class="page-header-row">
             <div>
                 <h1 class="page-title">Serviços & Tabela de Preços</h1>
-                <p class="page-subtitle">Configure os serviços disponíveis para agendamento, durações estimadas e preços vigentes.</p>
+                <p class="page-subtitle">Configure os serviços disponíveis para agendamento, durações estimadas e preços
+                    vigentes.</p>
             </div>
             <button type="button" class="btn-primary-admin" onclick="openModal('modalNewService')">
                 <i class="fa-solid fa-plus"></i> Novo Serviço
@@ -97,7 +108,8 @@
         <div class="admin-toolbar">
             <div class="search-box" style="width: 320px;">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" placeholder="Buscar serviço por nome..." oninput="filterTableBySearch(this, '.admin-item-card')">
+                <input type="text" class="search-input" placeholder="Buscar serviço por nome..."
+                    oninput="filterTableBySearch(this, '.admin-item-card')">
             </div>
 
             <div style="font-size: 0.88rem; color: var(--text-gray-muted);">
@@ -122,21 +134,25 @@
                     </div>
 
                     <p class="item-desc">
-                        A experiência completa: corte de cabelo personalizado degradê/social com lavagem especial, barba esculpida na navalha com toalha quente e massagem facial.
+                        A experiência completa: corte de cabelo personalizado degradê/social com lavagem especial, barba
+                        esculpida na navalha com toalha quente e massagem facial.
                     </p>
                 </div>
 
                 <div>
                     <div class="item-meta-row">
                         <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 1h 15min de atendimento</span>
+                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 1h 15min de
+                                atendimento</span>
                             <div class="item-price">R$ 70,00</div>
                         </div>
                         <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)" title="Pausar ou Ativar Serviço">
+                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
+                                title="Pausar ou Ativar Serviço">
                                 <i class="fa-solid fa-pause"></i>
                             </button>
-                            <button type="button" class="btn-icon-action danger" onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
+                            <button type="button" class="btn-icon-action danger"
+                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -159,7 +175,8 @@
                     </div>
 
                     <p class="item-desc">
-                        Corte contemporâneo executado com precisão: fade na navalha, low/mid/high fade, tesoura clássica, lavagem refrescante e finalização com pomada modeladora.
+                        Corte contemporâneo executado com precisão: fade na navalha, low/mid/high fade, tesoura
+                        clássica, lavagem refrescante e finalização com pomada modeladora.
                     </p>
                 </div>
 
@@ -170,10 +187,12 @@
                             <div class="item-price">R$ 45,00</div>
                         </div>
                         <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)" title="Pausar ou Ativar Serviço">
+                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
+                                title="Pausar ou Ativar Serviço">
                                 <i class="fa-solid fa-pause"></i>
                             </button>
-                            <button type="button" class="btn-icon-action danger" onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
+                            <button type="button" class="btn-icon-action danger"
+                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -196,7 +215,8 @@
                     </div>
 
                     <p class="item-desc">
-                        Ritual clássico de barbearia com toalha aromatizada a vapor, óleo pré-barba, navalha afiada, alinhamento simétrico e bálsamo pós-barba refrescante.
+                        Ritual clássico de barbearia com toalha aromatizada a vapor, óleo pré-barba, navalha afiada,
+                        alinhamento simétrico e bálsamo pós-barba refrescante.
                     </p>
                 </div>
 
@@ -207,10 +227,12 @@
                             <div class="item-price">R$ 35,00</div>
                         </div>
                         <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)" title="Pausar ou Ativar Serviço">
+                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
+                                title="Pausar ou Ativar Serviço">
                                 <i class="fa-solid fa-pause"></i>
                             </button>
-                            <button type="button" class="btn-icon-action danger" onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
+                            <button type="button" class="btn-icon-action danger"
+                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -233,7 +255,8 @@
                     </div>
 
                     <p class="item-desc">
-                        Manutenção e retoque fino da linha da nuca, contorno frontal e desenho higiênico da sobrancelha na lâmina ou pinça para manter a postura sempre em dia.
+                        Manutenção e retoque fino da linha da nuca, contorno frontal e desenho higiênico da sobrancelha
+                        na lâmina ou pinça para manter a postura sempre em dia.
                     </p>
                 </div>
 
@@ -244,10 +267,12 @@
                             <div class="item-price">R$ 25,00</div>
                         </div>
                         <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)" title="Pausar ou Ativar Serviço">
+                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
+                                title="Pausar ou Ativar Serviço">
                                 <i class="fa-solid fa-pause"></i>
                             </button>
-                            <button type="button" class="btn-icon-action danger" onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
+                            <button type="button" class="btn-icon-action danger"
+                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -270,7 +295,8 @@
                     </div>
 
                     <p class="item-desc">
-                        Tratamento reconstrutor intensivo com máscara nutritiva premium e ozônio, combatendo ressecamento e fortalecendo os fios desde a raiz.
+                        Tratamento reconstrutor intensivo com máscara nutritiva premium e ozônio, combatendo
+                        ressecamento e fortalecendo os fios desde a raiz.
                     </p>
                 </div>
 
@@ -281,10 +307,12 @@
                             <div class="item-price">R$ 40,00</div>
                         </div>
                         <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)" title="Pausar ou Ativar Serviço">
+                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
+                                title="Pausar ou Ativar Serviço">
                                 <i class="fa-solid fa-pause"></i>
                             </button>
-                            <button type="button" class="btn-icon-action danger" onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
+                            <button type="button" class="btn-icon-action danger"
+                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -326,13 +354,16 @@
                         </div>
                         <div class="form-group full-width">
                             <label class="form-label">Descrição Detalhada</label>
-                            <textarea class="form-textarea" placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
+                            <textarea class="form-textarea"
+                                placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin" onclick="closeModal('modalNewService')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-floppy-disk"></i> Salvar Serviço</button>
+                    <button type="button" class="btn-secondary-admin"
+                        onclick="closeModal('modalNewService')">Cancelar</button>
+                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-floppy-disk"></i> Salvar
+                        Serviço</button>
                 </div>
             </form>
         </div>
@@ -343,4 +374,3 @@
 </body>
 
 </html>
-

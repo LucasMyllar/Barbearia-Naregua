@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿<?php
+
+require_once __DIR__ . '/../includes/auth.php';
+exigirLogin();
+
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -44,10 +51,13 @@
             <span>Perfil</span>
         </button>
 
-        <a href="login.php" class="sidebar-logout">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Sair</span>
-        </a>
+        <form method="POST" action="logout.php" class="form-logout">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+            <button type="submit" class="sidebar-logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
+            </button>
+        </form>
     </section>
 
     <!-- Cabeçalho superior -->
@@ -65,7 +75,7 @@
     <!-- Conteúdo principal -->
     <main>
         <h1 class="client-name-title">
-           Lucas
+            Lucas
             <span class="client-name-subtitle">Seja bem-vindo(a) ao seu painel exclusivo</span>
         </h1>
 
@@ -89,7 +99,8 @@
                     <i class="fa-regular fa-calendar-xmark"></i>
                 </div>
                 <p class="empty-state-text">Nenhum agendamento realizado até o momento!</p>
-                <span class="empty-state-desc">Você ainda não possui horários marcados. Escolha o serviço ideal e agende com nossos melhores profissionais.</span>
+                <span class="empty-state-desc">Você ainda não possui horários marcados. Escolha o serviço ideal e agende
+                    com nossos melhores profissionais.</span>
                 <a href="agendar.php" class="btn-schedule-empty">
                     <i class="fa-solid fa-plus"></i> Fazer Agendamento
                 </a>

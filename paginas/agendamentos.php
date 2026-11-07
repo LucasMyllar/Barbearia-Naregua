@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirLogin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -44,10 +49,13 @@
             <span>Perfil</span>
         </button>
 
-        <a href="login.php" class="sidebar-logout">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Sair</span>
-        </a>
+        <form method="POST" action="logout.php" class="form-logout">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+            <button type="submit" class="sidebar-logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
+            </button>
+        </form>
     </section>
 
     <!-- Cabeçalho Superior -->
@@ -72,7 +80,8 @@
         <div class="agendamentos-top-row">
             <div>
                 <h1 class="page-title">Meus Agendamentos</h1>
-                <p class="page-subtitle">Acompanhe seus horários marcados, consulte o histórico e repita seus cortes favoritos.</p>
+                <p class="page-subtitle">Acompanhe seus horários marcados, consulte o histórico e repita seus cortes
+                    favoritos.</p>
             </div>
             <a href="agendar.php" class="btn-new-appointment">
                 <i class="fa-solid fa-calendar-plus"></i> Novo Agendamento
@@ -147,7 +156,8 @@
                     <div class="appointment-meta-info">
                         <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Lucas Silva</span>
                         <span class="meta-item"><i class="fa-regular fa-hourglass-half"></i> Duração: 1h 15min</span>
-                        <span class="meta-item"><i class="fa-solid fa-location-dot"></i> Cadeira 02 • Na Régua Barber</span>
+                        <span class="meta-item"><i class="fa-solid fa-location-dot"></i> Cadeira 02 • Na Régua
+                            Barber</span>
                     </div>
 
                     <span class="appointment-price-tag">R$ 70,00</span>
@@ -179,7 +189,8 @@
 
                     <div class="appointment-meta-info">
                         <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Carlos Navalha</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação: 5.0 (Excelente)</span>
+                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
+                            5.0 (Excelente)</span>
                     </div>
 
                     <span class="appointment-price-tag">R$ 45,00</span>
@@ -208,7 +219,8 @@
 
                     <div class="appointment-meta-info">
                         <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Carlos Navalha</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação: 5.0 (Excelente)</span>
+                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
+                            5.0 (Excelente)</span>
                     </div>
 
                     <span class="appointment-price-tag">R$ 35,00</span>
@@ -237,7 +249,8 @@
 
                     <div class="appointment-meta-info">
                         <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Lucas Silva</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação: 5.0 (Excelente)</span>
+                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
+                            5.0 (Excelente)</span>
                     </div>
 
                     <span class="appointment-price-tag">R$ 70,00</span>
@@ -252,9 +265,12 @@
 
             <!-- MENSAGEM VAZIA PARA CANCELADOS -->
             <div id="emptyMessage" style="display: none; text-align: center; padding: 60px 20px;">
-                <i class="fa-regular fa-calendar-check" style="font-size: 3rem; color: var(--gold); margin-bottom: 16px; display: inline-block;"></i>
-                <p style="font-size: 1.2rem; font-weight: 600; color: var(--text-white);">Nenhum agendamento nesta categoria.</p>
-                <span style="color: var(--text-gray-muted); font-size: 0.95rem;">Você não possui horários cancelados.</span>
+                <i class="fa-regular fa-calendar-check"
+                    style="font-size: 3rem; color: var(--gold); margin-bottom: 16px; display: inline-block;"></i>
+                <p style="font-size: 1.2rem; font-weight: 600; color: var(--text-white);">Nenhum agendamento nesta
+                    categoria.</p>
+                <span style="color: var(--text-gray-muted); font-size: 0.95rem;">Você não possui horários
+                    cancelados.</span>
             </div>
         </div>
     </main>

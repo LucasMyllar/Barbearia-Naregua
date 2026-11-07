@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirAdmin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -9,7 +14,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -54,10 +61,13 @@
                 <i class="fa-solid fa-store"></i>
                 <span>Ver Visão do Cliente</span>
             </a>
-            <a href="login.php" class="sidebar-logout">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Sair do Sistema</span>
-            </a>
+            <form method="POST" action="logout.php" class="form-logout">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                <button type="submit" class="sidebar-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </form>
         </div>
     </section>
 
@@ -86,7 +96,8 @@
         <div class="page-header-row">
             <div>
                 <h1 class="page-title">Visão Geral da Barbearia</h1>
-                <p class="page-subtitle">Acompanhe métricas em tempo real, atendimentos do dia e performance do salão.</p>
+                <p class="page-subtitle">Acompanhe métricas em tempo real, atendimentos do dia e performance do salão.
+                </p>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <button type="button" class="btn-primary-admin" onclick="openModal('modalNewAppointment')">
@@ -151,7 +162,8 @@
                 <h2 class="table-card-title">
                     <i class="fa-solid fa-clock-rotate-left"></i> Agenda de Hoje (Quarta-feira)
                 </h2>
-                <a href="adminAgendamentos.php" class="btn-secondary-admin" style="font-size: 0.82rem; padding: 6px 16px;">
+                <a href="adminAgendamentos.php" class="btn-secondary-admin"
+                    style="font-size: 0.82rem; padding: 6px 16px;">
                     Ver Todos os Agendamentos <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
@@ -184,16 +196,20 @@
                             <td>Carlos Navalha</td>
                             <td><strong style="color: var(--gold);">16:00</strong> (Em atendimento)</td>
                             <td><strong>R$ 70,00</strong></td>
-                            <td><span class="badge-status in-progress"><i class="fa-solid fa-spinner fa-spin"></i> Em Cadeira</span></td>
+                            <td><span class="badge-status in-progress"><i class="fa-solid fa-spinner fa-spin"></i> Em
+                                    Cadeira</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511987654321" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511987654321" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -214,16 +230,20 @@
                             <td>Lucas Silva (Fade Master)</td>
                             <td><strong style="color: var(--text-white);">17:00</strong></td>
                             <td><strong>R$ 45,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i> Confirmado</span></td>
+                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
+                                    Confirmado</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511971238899" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511971238899" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -244,16 +264,20 @@
                             <td>Carlos Navalha</td>
                             <td><strong style="color: var(--text-white);">17:45</strong></td>
                             <td><strong>R$ 35,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i> Confirmado</span></td>
+                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
+                                    Confirmado</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511965442211" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511965442211" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -274,13 +298,16 @@
                             <td>Lucas Silva (Fade Master)</td>
                             <td><strong style="color: var(--text-dim);">14:30</strong></td>
                             <td><strong>R$ 45,00</strong></td>
-                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span></td>
+                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span>
+                            </td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511955551234" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511955551234" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <span style="font-size: 0.8rem; color: var(--success);"><i class="fa-solid fa-check-double"></i> Pago</span>
+                                    <span style="font-size: 0.8rem; color: var(--success);"><i
+                                            class="fa-solid fa-check-double"></i> Pago</span>
                                 </div>
                             </td>
                         </tr>
@@ -331,8 +358,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin" onclick="closeModal('modalNewAppointment')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Agendar Cliente</button>
+                    <button type="button" class="btn-secondary-admin"
+                        onclick="closeModal('modalNewAppointment')">Cancelar</button>
+                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Agendar
+                        Cliente</button>
                 </div>
             </form>
         </div>
@@ -370,13 +399,16 @@
                         </div>
                         <div class="form-group full-width">
                             <label class="form-label">Descrição Detalhada</label>
-                            <textarea class="form-textarea" placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
+                            <textarea class="form-textarea"
+                                placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin" onclick="closeModal('modalNewService')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-floppy-disk"></i> Salvar Serviço</button>
+                    <button type="button" class="btn-secondary-admin"
+                        onclick="closeModal('modalNewService')">Cancelar</button>
+                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-floppy-disk"></i> Salvar
+                        Serviço</button>
                 </div>
             </form>
         </div>
@@ -387,4 +419,3 @@
 </body>
 
 </html>
-

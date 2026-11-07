@@ -319,6 +319,7 @@ main > div:nth-of-type(2) h2 {
     letter-spacing: -0.3px;
     margin-bottom: 4px;
     line-height: 1.25;
+    text-align: center;
 }
 
 main > div:nth-of-type(2) p {
@@ -326,13 +327,14 @@ main > div:nth-of-type(2) p {
     font-size: 0.92rem;
     line-height: 1.4;
     margin: 0;
+    text-align: center;
 }
 
 /* ==========================================================================
-   DIV 3: FORMULÁRIO DE LOGIN (GRID DE 3 COLUNAS)
+   FORMULÁRIO DE LOGIN (GRID DE 3 COLUNAS)
    Permite colocar 'Lembrar de mim' e 'Esqueceu a senha?' na mesma linha
    ========================================================================== */
-main > div:nth-of-type(3) {
+main > form {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
@@ -340,8 +342,21 @@ main > div:nth-of-type(3) {
     row-gap: 0px;
 }
 
+
+main > form > #mensagem {
+    margin-bottom: 16px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    color: var(--gold-light);
+    font-size: 0.85rem;
+}
+
+main > form > #mensagem:empty {
+    display: none;
+}
+
 /* Labels */
-main > div:nth-of-type(3) > label:not([for="lembrar"]) {
+main > form > label:not([for="lembrar"]) {
     grid-column: 1 / -1;
     display: block;
     font-size: 0.85rem;
@@ -351,10 +366,11 @@ main > div:nth-of-type(3) > label:not([for="lembrar"]) {
     letter-spacing: 0.3px;
 }
 
+
 /* Inputs de E-mail e Senha */
-main > div:nth-of-type(3) > input[type="email"],
-main > div:nth-of-type(3) > input[type="password"],
-main > div:nth-of-type(3) > input[type="text"]#senha {
+main > form > input[type="email"],
+main > form > input[type="password"],
+main > form > input[type="text"]#senha {
     grid-column: 1 / -1;
     width: 100%;
     height: 48px;
@@ -371,7 +387,7 @@ main > div:nth-of-type(3) > input[type="text"]#senha {
 }
 
 /* Ícone estilizado via SVG no fundo do input de E-mail */
-main > div:nth-of-type(3) > input[type="email"] {
+main > form > input[type="email"] {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: 15px center;
@@ -380,8 +396,8 @@ main > div:nth-of-type(3) > input[type="email"] {
 }
 
 /* Ícone estilizado via SVG no fundo do input de Senha */
-main > div:nth-of-type(3) > input[type="password"],
-main > div:nth-of-type(3) > input[type="text"]#senha {
+main > form > input[type="password"],
+main > form > input[type="text"]#senha {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: 15px center;
@@ -391,33 +407,33 @@ main > div:nth-of-type(3) > input[type="text"]#senha {
 }
 
 /* Estados de foco dos inputs */
-main > div:nth-of-type(3) > input[type="email"]:focus,
-main > div:nth-of-type(3) > input[type="password"]:focus,
-main > div:nth-of-type(3) > input[type="text"]#senha:focus {
+main > form > input[type="email"]:focus,
+main > form > input[type="password"]:focus,
+main > form > input[type="text"]#senha:focus {
     background-color: var(--bg-input-focus);
     border-color: var(--gold);
     box-shadow: 0 0 0 3px var(--gold-glow);
 }
 
 /* Ícones dourados quando em foco */
-main > div:nth-of-type(3) > input[type="email"]:focus {
+main > form > input[type="email"]:focus {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
 }
 
-main > div:nth-of-type(3) > input[type="password"]:focus,
-main > div:nth-of-type(3) > input[type="text"]#senha:focus {
+main > form > input[type="password"]:focus,
+main > form > input[type="text"]#senha:focus {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E5A93C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='11' x='3' y='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'/%3E%3C/svg%3E");
 }
 
 /* Placeholder */
-main > div:nth-of-type(3) input::placeholder {
+main > form input::placeholder {
     color: var(--text-dim);
     font-size: 0.9rem;
 }
 
 /* Botão de alternar visibilidade de senha (Olho) */
 .btn-toggle-senha,
-main > div:nth-of-type(3) > button#toggleSenha {
+main > form > button#toggleSenha {
     grid-column: 1 / -1;
     justify-self: end;
     margin-right: 14px;
@@ -437,13 +453,13 @@ main > div:nth-of-type(3) > button#toggleSenha {
 }
 
 .btn-toggle-senha:hover,
-main > div:nth-of-type(3) > button#toggleSenha:hover {
+main > form > button#toggleSenha:hover {
     color: var(--gold);
     transform: scale(1.1);
 }
 
 /* Checkbox 'Lembrar de mim' */
-main > div:nth-of-type(3) > input[type="checkbox"]#lembrar {
+main > form > input[type="checkbox"]#lembrar {
     grid-column: 1;
     width: 17px;
     height: 17px;
@@ -454,7 +470,7 @@ main > div:nth-of-type(3) > input[type="checkbox"]#lembrar {
 }
 
 /* Label 'Lembrar de mim' */
-main > div:nth-of-type(3) > label[for="lembrar"] {
+main > form > label[for="lembrar"] {
     grid-column: 2;
     padding-left: 8px;
     font-size: 0.86rem;
@@ -465,12 +481,12 @@ main > div:nth-of-type(3) > label[for="lembrar"] {
     transition: var(--transition);
 }
 
-main > div:nth-of-type(3) > label[for="lembrar"]:hover {
+main > form > label[for="lembrar"]:hover {
     color: var(--text-white);
 }
 
 /* Link 'Esqueceu a senha?' */
-main > div:nth-of-type(3) > a {
+main > form > a {
     grid-column: 3;
     justify-self: end;
     font-size: 0.86rem;
@@ -480,13 +496,13 @@ main > div:nth-of-type(3) > a {
     transition: var(--transition);
 }
 
-main > div:nth-of-type(3) > a:hover {
+main > form > a:hover {
     color: var(--gold);
     text-decoration: underline;
 }
 
 /* Botão 'Entrar' */
-main > div:nth-of-type(3) > button[type="submit"] {
+main > form > button[type="submit"] {
     grid-column: 1 / -1;
     width: 100%;
     height: 48px;
@@ -508,14 +524,14 @@ main > div:nth-of-type(3) > button[type="submit"] {
     gap: 8px;
 }
 
-main > div:nth-of-type(3) > button[type="submit"]:hover {
+main > form > button[type="submit"]:hover {
     background: linear-gradient(135deg, #FFD27D 0%, var(--gold-light) 100%);
     transform: translateY(-2px);
     box-shadow: 0 12px 30px -4px rgba(229, 169, 60, 0.45);
     color: #000;
 }
 
-main > div:nth-of-type(3) > button[type="submit"]:active {
+main > form > button[type="submit"]:active {
     transform: translateY(0);
     box-shadow: 0 4px 15px rgba(229, 169, 60, 0.3);
 }
@@ -609,8 +625,8 @@ main > p a:hover {
     }
 
     /* Em telas muito estreitas, o lembrar e esqueci a senha se adaptam */
-    main > div:nth-of-type(3) > label[for="lembrar"],
-    main > div:nth-of-type(3) > a {
+    main > form > label[for="lembrar"],
+    main > form > a {
         font-size: 0.8rem;
     }
 }

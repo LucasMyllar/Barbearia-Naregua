@@ -275,10 +275,16 @@ body > section > button.active:hover,
     box-shadow: 0 8px 24px -2px var(--gold-glow-lg);
 }
 
-/* Botão Sair - Fixado no rodapé da barra lateral conforme o wireframe */
+/* Formulário de saída fixado no rodapé da barra lateral */
+.sidebar > .form-logout {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Botão Sair */
 body > section > a,
 .sidebar-logout {
-    margin-top: auto;
+    margin-top: 0;
     width: 100%;
     height: 48px;
     border-radius: var(--radius-md);
@@ -295,6 +301,10 @@ body > section > a,
     gap: 10px;
     padding: 0 16px;
     transition: var(--transition);
+}
+
+.sidebar-logout {
+    cursor: pointer;
 }
 
 body > section > a i,
@@ -698,7 +708,7 @@ main > div p,
     }
 
     body > section > a,
-    .sidebar-logout {
+    .sidebar > .form-logout {
         margin-top: 14px;
     }
 

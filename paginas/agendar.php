@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirLogin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -44,10 +49,13 @@
             <span>Perfil</span>
         </button>
 
-        <a href="login.php" class="sidebar-logout">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span>Sair</span>
-        </a>
+        <form method="POST" action="logout.php" class="form-logout">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+            <button type="submit" class="sidebar-logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
+            </button>
+        </form>
     </section>
 
     <!-- Cabeçalho Superior -->

@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿<?php
+require_once __DIR__ . '/../includes/auth.php';
+exigirAdmin();
+?>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -9,7 +14,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -54,10 +61,13 @@
                 <i class="fa-solid fa-store"></i>
                 <span>Ver Visão do Cliente</span>
             </a>
-            <a href="login.php" class="sidebar-logout">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <span>Sair do Sistema</span>
-            </a>
+            <form method="POST" action="logout.php" class="form-logout">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                <button type="submit" class="sidebar-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </form>
         </div>
     </section>
 
@@ -86,7 +96,8 @@
         <div class="page-header-row">
             <div>
                 <h1 class="page-title">Gestão de Agendamentos</h1>
-                <p class="page-subtitle">Controle total da agenda da barbearia, status de atendimento e agendamento manual.</p>
+                <p class="page-subtitle">Controle total da agenda da barbearia, status de atendimento e agendamento
+                    manual.</p>
             </div>
             <button type="button" class="btn-primary-admin" onclick="openModal('modalNewAppointment')">
                 <i class="fa-solid fa-calendar-plus"></i> Novo Agendamento
@@ -98,11 +109,16 @@
             <div class="toolbar-left">
                 <!-- Abas de Filtro de Status -->
                 <div class="filter-tabs">
-                    <button type="button" class="filter-tab-btn active" onclick="filterAdminAppointments('all', this)">Todos</button>
-                    <button type="button" class="filter-tab-btn" onclick="filterAdminAppointments('in-progress', this)">Em Cadeira</button>
-                    <button type="button" class="filter-tab-btn" onclick="filterAdminAppointments('confirmed', this)">Confirmados</button>
-                    <button type="button" class="filter-tab-btn" onclick="filterAdminAppointments('completed', this)">Concluídos</button>
-                    <button type="button" class="filter-tab-btn" onclick="filterAdminAppointments('canceled', this)">Cancelados</button>
+                    <button type="button" class="filter-tab-btn active"
+                        onclick="filterAdminAppointments('all', this)">Todos</button>
+                    <button type="button" class="filter-tab-btn"
+                        onclick="filterAdminAppointments('in-progress', this)">Em Cadeira</button>
+                    <button type="button" class="filter-tab-btn"
+                        onclick="filterAdminAppointments('confirmed', this)">Confirmados</button>
+                    <button type="button" class="filter-tab-btn"
+                        onclick="filterAdminAppointments('completed', this)">Concluídos</button>
+                    <button type="button" class="filter-tab-btn"
+                        onclick="filterAdminAppointments('canceled', this)">Cancelados</button>
                 </div>
             </div>
 
@@ -110,7 +126,8 @@
                 <!-- Campo de Busca em Tempo Real -->
                 <div class="search-box" style="width: 320px;">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" class="search-input" placeholder="Buscar por cliente, serviço ou fone..." oninput="filterTableBySearch(this, '.appointment-row')">
+                    <input type="text" class="search-input" placeholder="Buscar por cliente, serviço ou fone..."
+                        oninput="filterTableBySearch(this, '.appointment-row')">
                 </div>
             </div>
         </div>
@@ -150,16 +167,20 @@
                             <td>Carlos Navalha</td>
                             <td>1h 15min</td>
                             <td><strong style="color: var(--text-white);">R$ 70,00</strong></td>
-                            <td><span class="badge-status in-progress"><i class="fa-solid fa-spinner fa-spin"></i> Em Cadeira</span></td>
+                            <td><span class="badge-status in-progress"><i class="fa-solid fa-spinner fa-spin"></i> Em
+                                    Cadeira</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511987654321" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511987654321" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -184,16 +205,20 @@
                             <td>Lucas Silva</td>
                             <td>45 min</td>
                             <td><strong style="color: var(--text-white);">R$ 45,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i> Confirmado</span></td>
+                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
+                                    Confirmado</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511971238899" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511971238899" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -218,16 +243,20 @@
                             <td>Carlos Navalha</td>
                             <td>30 min</td>
                             <td><strong style="color: var(--text-white);">R$ 35,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i> Confirmado</span></td>
+                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
+                                    Confirmado</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511965442211" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511965442211" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -252,16 +281,20 @@
                             <td>André Barbieri</td>
                             <td>20 min</td>
                             <td><strong style="color: var(--text-white);">R$ 25,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i> Confirmado</span></td>
+                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
+                                    Confirmado</span></td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511988887766" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511988887766" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <button type="button" class="btn-icon-action success" onclick="concludeAppointment(this)" title="Concluir Atendimento">
+                                    <button type="button" class="btn-icon-action success"
+                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="button" class="btn-icon-action danger" onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
+                                    <button type="button" class="btn-icon-action danger"
+                                        onclick="cancelAdminAppointment(this)" title="Cancelar Agendamento">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </div>
@@ -286,13 +319,16 @@
                             <td>Lucas Silva</td>
                             <td>45 min</td>
                             <td><strong style="color: var(--text-white);">R$ 45,00</strong></td>
-                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span></td>
+                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span>
+                            </td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511955551234" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511955551234" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <span style="font-size: 0.8rem; color: var(--success);"><i class="fa-solid fa-check-double"></i> Pago</span>
+                                    <span style="font-size: 0.8rem; color: var(--success);"><i
+                                            class="fa-solid fa-check-double"></i> Pago</span>
                                 </div>
                             </td>
                         </tr>
@@ -315,13 +351,16 @@
                             <td>Carlos Navalha</td>
                             <td>30 min</td>
                             <td><strong style="color: var(--text-white);">R$ 35,00</strong></td>
-                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span></td>
+                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span>
+                            </td>
                             <td style="text-align: right;">
                                 <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511944449988" target="_blank" class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                    <a href="https://wa.me/5511944449988" target="_blank"
+                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
                                         <i class="fa-brands fa-whatsapp"></i>
                                     </a>
-                                    <span style="font-size: 0.8rem; color: var(--success);"><i class="fa-solid fa-check-double"></i> Pago</span>
+                                    <span style="font-size: 0.8rem; color: var(--success);"><i
+                                            class="fa-solid fa-check-double"></i> Pago</span>
                                 </div>
                             </td>
                         </tr>
@@ -344,18 +383,23 @@
                             <td>Lucas Silva</td>
                             <td>40 min</td>
                             <td><strong style="color: var(--text-dim);">R$ 40,00</strong></td>
-                            <td><span class="badge-status canceled"><i class="fa-solid fa-xmark"></i> Cancelado</span></td>
+                            <td><span class="badge-status canceled"><i class="fa-solid fa-xmark"></i> Cancelado</span>
+                            </td>
                             <td style="text-align: right;">
-                                <span style="font-size: 0.8rem; color: var(--danger);"><i class="fa-solid fa-ban"></i> Desistência</span>
+                                <span style="font-size: 0.8rem; color: var(--danger);"><i class="fa-solid fa-ban"></i>
+                                    Desistência</span>
                             </td>
                         </tr>
 
                         <!-- Mensagem quando nenhum resultado for encontrado na busca -->
                         <tr id="emptyTableMessage" style="display: none;">
                             <td colspan="8" style="text-align: center; padding: 40px;">
-                                <i class="fa-regular fa-calendar-xmark" style="font-size: 2.4rem; color: var(--gold); margin-bottom: 12px; display: inline-block;"></i>
-                                <p style="color: var(--text-white); font-weight: 600;">Nenhum agendamento encontrado com esses critérios.</p>
-                                <span style="color: var(--text-dim); font-size: 0.85rem;">Tente ajustar as abas de status ou o termo de pesquisa.</span>
+                                <i class="fa-regular fa-calendar-xmark"
+                                    style="font-size: 2.4rem; color: var(--gold); margin-bottom: 12px; display: inline-block;"></i>
+                                <p style="color: var(--text-white); font-weight: 600;">Nenhum agendamento encontrado com
+                                    esses critérios.</p>
+                                <span style="color: var(--text-dim); font-size: 0.85rem;">Tente ajustar as abas de
+                                    status ou o termo de pesquisa.</span>
                             </td>
                         </tr>
                     </tbody>
@@ -405,8 +449,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin" onclick="closeModal('modalNewAppointment')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Agendar Cliente</button>
+                    <button type="button" class="btn-secondary-admin"
+                        onclick="closeModal('modalNewAppointment')">Cancelar</button>
+                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Agendar
+                        Cliente</button>
                 </div>
             </form>
         </div>
@@ -417,4 +463,3 @@
 </body>
 
 </html>
-
