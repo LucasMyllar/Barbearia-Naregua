@@ -1,6 +1,34 @@
 ﻿<?php
 require_once __DIR__ . '/../includes/auth.php';
 exigirLogin();
+
+require_once __DIR__ . '/../config/database.php';
+
+$servicos = $pdo->query('SELECT id_servico, nome, preco, duracao_minutos FROM servico WHERE ativo = true ORDER BY nome')->fetchAll();
+$horarios = $pdo->query('SELECT dia_semana, hora_inicio, hora_fim FROM horario_funcionamento WHERE ativo = true ORDER BY dia_semana, hora_inicio')->fetchAll();
+
+$diasAbertos = array_unique(array_column($horarios, 'dia_semana'));
+$nomesDia = [1 => 'Seg', 2 => 'Ter', 3 => 'Qua', 4 => 'Qui', 5 => 'Sex', 6 => 'Sáb', 7 => 'Dom'];
+$nomesMes = [1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 5 => 'Mai', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago', 9 => 'Set', 10 => 'Out', 11 => 'Nov', 12 => 'Dez'];
+
+$dias = [];
+$data = new DateTime('today');
+
+while (count($dias) < 6) {
+    $numeroDia = (int) $data->format('N');
+
+    if (in_array($numeroDia, $diasAbertos)) {
+        $dias[] = [
+            'data' => $data->format('Y-m-d'),
+            'semana' => $nomesDia[$numeroDia],
+            'dia' => $data->format('d'),
+            'mes' => $nomesMes[(int) $data->format('n')],
+        ];
+    }
+
+    $data->modify('+1 day');
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -94,86 +122,25 @@ exigirLogin();
                     </div>
 
                     <div class="services-selection-grid">
-                        <!-- Serviço 1: Corte Masculino -->
-                        <div class="service-option-card"
-                            onclick="selectService(this, 'Corte Masculino (Fade/Social)', 'R$ 45,00', '45 min')">
-                            <div class="service-image-box">
-                                <img src="../img/corteMasculino.jpg" alt="Corte Masculino">
-                                <div class="service-image-overlay"></div>
-                            </div>
-                            <div class="service-info-box">
-                                <h3 class="service-name">Corte Masculino</h3>
-                                <div class="service-details">
-                                    <span><i class="fa-regular fa-clock"></i> 45 min</span>
-                                    <span><i class="fa-solid fa-scissors"></i> Degradê / Social</span>
-                                </div>
-                                <div class="service-footer">
-                                    <span class="service-price">R$ 45,00</span>
-                                    <div class="service-radio-indicator"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Serviço 2: Barba -->
-                        <div class="service-option-card"
-                            onclick="selectService(this, 'Barba Completa & Toalha Quente', 'R$ 35,00', '30 min')">
-                            <div class="service-image-box">
-                                <img src="../img/barba.jpg" alt="Barba">
-                                <div class="service-image-overlay"></div>
-                            </div>
-                            <div class="service-info-box">
-                                <h3 class="service-name">Barba Completa</h3>
-                                <div class="service-details">
-                                    <span><i class="fa-regular fa-clock"></i> 30 min</span>
-                                    <span><i class="fa-solid fa-spray-can-sparkles"></i> Toalha Quente</span>
-                                </div>
-                                <div class="service-footer">
-                                    <span class="service-price">R$ 35,00</span>
-                                    <div class="service-radio-indicator"></div>
+                        <?php foreach ($servicos as $servico): ?>
+                            <div class="service-option-card" data-id="<?= (int) $servico['id_servico'] ?>"
+                                data-nome="<?= htmlspecialchars($servico['nome']) ?>"
+                                data-preco="<?= (float) $servico['preco'] ?>"
+                                data-duracao="<?= (int) $servico['duracao_minutos'] ?>">
+                                <div class="service-info-box">
+                                    <h3 class="service-name"><?= htmlspecialchars($servico['nome']) ?></h3>
+                                    <div class="service-details">
+                                        <span><i class="fa-regular fa-clock"></i> <?= (int) $servico['duracao_minutos'] ?>
+                                            min</span>
+                                    </div>
+                                    <div class="service-footer">
+                                        <span class="service-price">R$
+                                            <?= number_format((float) $servico['preco'], 2, ',', ',') ?></span>
+                                        <div class="service-radio-indicator"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Serviço 3: Combo Cabelo + Barba (Destaque Inicial) -->
-                        <div class="service-option-card selected"
-                            onclick="selectService(this, 'Combo Cabelo + Barba Na Régua', 'R$ 70,00', '1h 15min')">
-                            <span class="service-badge-popular"><i class="fa-solid fa-star"></i> Mais Pedido</span>
-                            <div class="service-image-box">
-                                <img src="../img/cabeloBarba.jpg" alt="Cabelo e Barba">
-                                <div class="service-image-overlay"></div>
-                            </div>
-                            <div class="service-info-box">
-                                <h3 class="service-name">Cabelo + Barba</h3>
-                                <div class="service-details">
-                                    <span><i class="fa-regular fa-clock"></i> 1h 15min</span>
-                                    <span><i class="fa-solid fa-star"></i> Experiência Completa</span>
-                                </div>
-                                <div class="service-footer">
-                                    <span class="service-price">R$ 70,00</span>
-                                    <div class="service-radio-indicator"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Serviço 4: Acabamento / Pezinho -->
-                        <div class="service-option-card"
-                            onclick="selectService(this, 'Acabamento & Sobrancelha', 'R$ 25,00', '20 min')">
-                            <div class="service-image-box">
-                                <img src="../img/sobrancelha.png" alt="Acabamento e Sobrancelha">
-                                <div class="service-image-overlay"></div>
-                            </div>
-                            <div class="service-info-box">
-                                <h3 class="service-name">Acabamento & Sobrancelha</h3>
-                                <div class="service-details">
-                                    <span><i class="fa-regular fa-clock"></i> 20 min</span>
-                                    <span><i class="fa-solid fa-check"></i> Navalha & Linhas</span>
-                                </div>
-                                <div class="service-footer">
-                                    <span class="service-price">R$ 25,00</span>
-                                    <div class="service-radio-indicator"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
@@ -187,80 +154,19 @@ exigirLogin();
 
                     <!-- Seletor de Dias da Semana -->
                     <div class="date-selector-row">
-                        <div class="date-pill selected" onclick="selectDate(this, 'Hoje, 29 de Outubro')">
-                            <span class="date-pill-weekday">Hoje</span>
-                            <span class="date-pill-day">29</span>
-                            <span class="date-pill-month">Out</span>
-                        </div>
-                        <div class="date-pill" onclick="selectDate(this, 'Amanhã, 30 de Outubro')">
-                            <span class="date-pill-weekday">Qui</span>
-                            <span class="date-pill-day">30</span>
-                            <span class="date-pill-month">Out</span>
-                        </div>
-                        <div class="date-pill" onclick="selectDate(this, 'Sexta, 31 de Outubro')">
-                            <span class="date-pill-weekday">Sex</span>
-                            <span class="date-pill-day">31</span>
-                            <span class="date-pill-month">Out</span>
-                        </div>
-                        <div class="date-pill" onclick="selectDate(this, 'Sábado, 01 de Novembro')">
-                            <span class="date-pill-weekday">Sáb</span>
-                            <span class="date-pill-day">01</span>
-                            <span class="date-pill-month">Nov</span>
-                        </div>
-                        <div class="date-pill" onclick="selectDate(this, 'Segunda, 03 de Novembro')">
-                            <span class="date-pill-weekday">Seg</span>
-                            <span class="date-pill-day">03</span>
-                            <span class="date-pill-month">Nov</span>
-                        </div>
-                        <div class="date-pill" onclick="selectDate(this, 'Terça, 04 de Novembro')">
-                            <span class="date-pill-weekday">Ter</span>
-                            <span class="date-pill-day">04</span>
-                            <span class="date-pill-month">Nov</span>
-                        </div>
+                        <?php foreach ($dias as $i => $dia): ?>
+                            <div class="date-pill <?= $i === 0 ? 'selected' : '' ?>"
+                                data-data="<?= htmlspecialchars($dia['data']) ?>">
+                                <span class="date-pill-weekday"><?= htmlspecialchars($dia['semana']) ?></span>
+                                <span class="date-pill-day"><?= htmlspecialchars($dia['dia']) ?></span>
+                                <span class="date-pill-month"><?= htmlspecialchars($dia['mes']) ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
 
                     <!-- Grade de Horários -->
-                    <div class="time-slots-container">
-                        <div class="time-period-group">
-                            <span class="time-period-title"><i class="fa-regular fa-sun"></i> Manhã</span>
-                            <div class="time-slots-grid">
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '09:00')">09:00</button>
-                                <button type="button" class="time-slot-btn disabled" disabled>09:45</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '10:30')">10:30</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '11:15')">11:15</button>
-                            </div>
-                        </div>
-
-                        <div class="time-period-group">
-                            <span class="time-period-title"><i class="fa-solid fa-cloud-sun"></i> Tarde</span>
-                            <div class="time-slots-grid">
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '13:30')">13:30</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '14:15')">14:15</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '15:00')">15:00</button>
-                                <button type="button" class="time-slot-btn selected"
-                                    onclick="selectTime(this, '16:00')">16:00</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '17:00')">17:00</button>
-                            </div>
-                        </div>
-
-                        <div class="time-period-group">
-                            <span class="time-period-title"><i class="fa-solid fa-moon"></i> Noite</span>
-                            <div class="time-slots-grid">
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '18:00')">18:00</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '18:45')">18:45</button>
-                                <button type="button" class="time-slot-btn"
-                                    onclick="selectTime(this, '19:30')">19:30</button>
-                            </div>
-                        </div>
+                    <div class="time-slots-container" id="horariosContainer">
+                        <p>Escolha um serviço e uma data para ver os horários.</p>
                     </div>
                 </div>
 

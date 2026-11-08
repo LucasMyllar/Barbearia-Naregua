@@ -1,9 +1,7 @@
 /* ==========================================================================
-   NA RÉGUA / BARBEARIA - AGENDAR HORÁRIO (agendar.html)
+   NA RÉGUA / BARBEARIA - AGENDAR HORÁRIO (agendar.php)
    Alinhado com o Design System (style.css, login.css, inicioCliente.css)
    ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
 
 :root {
     /* Color Palette */
@@ -491,45 +489,6 @@ main {
     box-shadow: 0 0 25px -4px var(--gold-glow);
 }
 
-.service-badge-popular {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: #0A0C10;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: var(--radius-full);
-    z-index: 2;
-    letter-spacing: 0.5px;
-}
-
-.service-image-box {
-    width: 100%;
-    height: 130px;
-    overflow: hidden;
-    position: relative;
-}
-
-.service-image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.service-option-card:hover .service-image-box img {
-    transform: scale(1.08);
-}
-
-.service-image-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(15, 19, 28, 0.9) 100%);
-}
-
 .service-info-box {
     padding: 16px;
     display: flex;
@@ -602,87 +561,7 @@ main {
 }
 
 /* ==========================================================================
-   ETAPA 2: ESCOLHA DO PROFISSIONAL
-   ========================================================================== */
-.barbers-selection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-}
-
-.barber-card {
-    background: var(--bg-dark-secondary);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: 20px 16px;
-    cursor: pointer;
-    text-align: center;
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.barber-card:hover {
-    border-color: var(--gold);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
-}
-
-.barber-card.selected {
-    border-color: var(--gold);
-    background: rgba(229, 169, 60, 0.05);
-    box-shadow: 0 0 20px -4px var(--gold-glow);
-}
-
-.barber-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 2px solid var(--border-gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    color: var(--gold);
-    margin-bottom: 12px;
-    box-shadow: 0 0 15px -3px var(--gold-glow);
-    transition: var(--transition);
-}
-
-.barber-card.selected .barber-avatar {
-    border-color: var(--gold);
-    transform: scale(1.08);
-}
-
-.barber-name {
-    font-weight: 700;
-    color: var(--text-white);
-    font-size: 0.95rem;
-    margin-bottom: 4px;
-}
-
-.barber-specialty {
-    font-size: 0.78rem;
-    color: var(--text-gray-muted);
-    margin-bottom: 10px;
-}
-
-.barber-rating {
-    font-size: 0.78rem;
-    color: var(--gold);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(229, 169, 60, 0.1);
-    padding: 3px 10px;
-    border-radius: var(--radius-full);
-}
-
-/* ==========================================================================
-   ETAPA 3: DATA E HORÁRIOS
+   ETAPA 2: DATA E HORÁRIOS
    ========================================================================== */
 .date-selector-row {
     display: flex;
@@ -758,23 +637,6 @@ main {
     gap: 18px;
 }
 
-.time-period-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.time-period-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-gray-muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 .time-slots-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -808,13 +670,6 @@ main {
     font-weight: 700;
     border-color: var(--gold);
     box-shadow: 0 3px 12px -1px var(--gold-glow);
-}
-
-.time-slot-btn.disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    text-decoration: line-through;
-    border-color: transparent;
 }
 
 /* ==========================================================================
