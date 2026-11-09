@@ -816,6 +816,10 @@ main {
     transform: translateY(0);
 }
 
+#erroAgendamento {
+    text-align: center;
+}
+
 .summary-note {
     text-align: center;
     color: var(--text-dim);

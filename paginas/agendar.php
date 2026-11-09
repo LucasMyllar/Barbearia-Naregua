@@ -225,6 +225,8 @@ while (count($dias) < 6) {
                     <span class="summary-total-value" id="summaryPrice">R$ 70,00</span>
                 </div>
 
+                <p id="erroAgendamento"></p>
+                <br>
                 <button type="button" class="btn-confirm-booking" onclick="confirmBooking()">
                     <i class="fa-solid fa-check"></i> Confirmar Horário
                 </button>
@@ -243,8 +245,7 @@ while (count($dias) < 6) {
                 <i class="fa-solid fa-check"></i>
             </div>
             <h3 class="modal-title">Horário Confirmado!</h3>
-            <p class="modal-text">Seu agendamento foi realizado com sucesso na Barbearia Na Régua. Enviamos os detalhes
-                e lembretes para o seu perfil e WhatsApp.</p>
+            <p class="modal-text">Seu agendamento foi registrado e aguarda confirmação da barbearia.</p>
             <div class="modal-actions">
                 <a href="agendamentos.php" class="btn-modal-primary">Ver Meus Agendamentos</a>
             </div>

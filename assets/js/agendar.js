@@ -123,10 +123,44 @@ async function carregarHorarios() {
     }
 }
 
-function confirmBooking() {
-    const modal = document.getElementById('successModal');
-    if (modal) {
-        modal.classList.add('active');
+async function confirmBooking() {
+    const botao = document.querySelector('.btn-confirm-booking');
+    const erroEl = document.getElementById('erroAgendamento');
+    const pilula = document.querySelector('.date-pill.selected');
+    const ids = [...document.querySelectorAll('.service-option-card.selected')].map(c => c.dataset.id);
+
+    erroEl.textContent = '';
+
+    if (ids.length === 0 || !pilula || !horarioEscolhido) {
+        erroEl.textContent = 'Escolha o serviço, a data e o horário.';
+        return;
+    }
+
+    const form = new FormData();
+    form.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+    form.append('data', pilula.dataset.data);
+    form.append('hora', horarioEscolhido);
+    form.append('servicos', ids.join(','));
+    
+    botao.disabled = true;
+
+    try {
+        const resposta = await fetch('criar_agendamento.php', { method: 'POST', body: form });
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            document.getElementById('successModal').classList.add('active');
+            carregarHorarios();
+        } else {
+            erroEl.textContent = dados.erro || 'Não foi possível concluir o agendamento.';
+            if (resposta.status === 409) {
+                carregarHorarios();
+            }
+        }
+    } catch (erro) {
+        erroEl.textContent = 'Não foi possível concluir o agendamento.';
+    } finally {
+        botao.disabled = false;
     }
 }
 
