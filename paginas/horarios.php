@@ -55,6 +55,16 @@ $stmt = $pdo->prepare('SELECT hora_inicio, hora_fim FROM horario_funcionamento W
 $stmt->execute([':dia' => $diaSemana]);
 $faixas = $stmt->fetchAll();
 
+$diaSeguinte = (clone $dataObj)->modify('+1 day');
+
+$stmt = $pdo->prepare('SELECT inicio, fim FROM app_privado.intervalos_ocupados(CAST(:ini AS timestamp), CAST(:fim AS timestamp))');
+$stmt->execute([
+    ':ini' => $dataObj->format('Y-m-d H:i:s'),
+    ':fim' => $diaSeguinte->format('Y-m-d H:i:s'),
+]);
+
+$ocupados = $stmt->fetchAll();
+
 $horarios = [];
 
 $agora = new DateTime();
@@ -67,9 +77,23 @@ foreach ($faixas as $faixa) {
     $atual = clone $inicio;
 
     while ($atual <= $ultimoInicio) {
-        if ($atual > $agora) {
+        $fimAtendimento = (clone $atual)->modify("+$duracao minutes");
+        $livre = true;
+
+        foreach ($ocupados as $ocupado) {
+            $ocupadoInicio = new DateTime($ocupado['inicio']);
+            $ocupadoFim = new DateTime($ocupado['fim']);
+
+            if ($atual < $ocupadoFim && $fimAtendimento > $ocupadoInicio) {
+                $livre = false;
+                break;
+            }
+        }
+
+        if ($livre && $atual > $agora) {
             $horarios[] = $atual->format('H:i');
         }
+
         $atual->modify("+$passo minutes");
     }
 }
