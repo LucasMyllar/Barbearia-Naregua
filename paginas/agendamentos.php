@@ -1,6 +1,81 @@
 ﻿<?php
 require_once __DIR__ . '/../includes/auth.php';
 exigirLogin();
+
+require_once __DIR__ . '/../config/database.php';
+
+$stmt = $pdo->prepare('SELECT * FROM app_privado.meus_agendamentos(CAST(:cliente AS integer))');
+$stmt->execute([':cliente' => (int) $_SESSION['id_usuario']]);
+$agendamentos = $stmt->fetchAll();
+
+$abas = [
+    'PENDENTE'   => 'active',
+    'CONFIRMADO' => 'active',
+    'CONCLUIDO'  => 'history',
+    'CANCELADO'  => 'canceled',
+];
+$rotulos = [
+    'PENDENTE'   => 'Pendente',
+    'CONFIRMADO' => 'Confirmado',
+    'CONCLUIDO'  => 'Concluído',
+    'CANCELADO'  => 'Cancelado',
+];
+$classesStatus = [
+    'PENDENTE'   => 'pending',
+    'CONFIRMADO' => 'confirmed',
+    'CONCLUIDO'  => 'done',
+    'CANCELADO'  => 'canceled',
+];
+$meses = [
+    1 => 'Janeiro',
+    2 => 'Fevereiro',
+    3 => 'Março',
+    4 => 'Abril',
+    5 => 'Maio',
+    6 => 'Junho',
+    7 => 'Julho',
+    8 => 'Agosto',
+    9 => 'Setembro',
+    10 => 'Outubro',
+    11 => 'Novembro',
+    12 => 'Dezembro'
+];
+
+$contagem = ['active' => 0, 'history' => 0, 'canceled' => 0];
+
+foreach ($agendamentos as $ag) {
+    $tipo = $abas[$ag['status']] ?? 'active';
+    $contagem[$tipo]++;
+}
+
+function formatarDuracao(int $minutos): string
+{
+    $h = intdiv($minutos, 60);
+    $m = $minutos % 60;
+    if ($h === 0) return "$m min";
+    if ($m === 0) return "{$h}h";
+    return "{$h}h {$m}min";
+}
+
+$agora = new DateTime();
+$proximo = null;
+$concluidos = 0;
+
+foreach ($agendamentos as $ag) {
+    if ($ag['status'] === 'CONCLUIDO') {
+        $concluidos++;
+    }
+
+    $ativo = in_array($ag['status'], ['PENDENTE', 'CONFIRMADO'], true);
+    $dataAg = new DateTime($ag['inicio']);
+
+    if ($proximo === null && $ativo && $dataAg >= $agora) {
+        $proximo = $dataAg;
+    }
+}
+
+$total = count($agendamentos);
+
 ?>
 
 <!DOCTYPE html>
@@ -80,15 +155,14 @@ exigirLogin();
         <div class="agendamentos-top-row">
             <div>
                 <h1 class="page-title">Meus Agendamentos</h1>
-                <p class="page-subtitle">Acompanhe seus horários marcados, consulte o histórico e repita seus cortes
-                    favoritos.</p>
+                <p class="page-subtitle">Acompanhe seus horários marcados e consulte o histórico.</p>
             </div>
             <a href="agendar.php" class="btn-new-appointment">
                 <i class="fa-solid fa-calendar-plus"></i> Novo Agendamento
             </a>
         </div>
 
-        <!-- Estatísticas / Resumo de Fidelidade -->
+        <!-- Estatísticas (ainda fixas: serão calculadas no próximo passo) -->
         <div class="stats-cards-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -96,8 +170,14 @@ exigirLogin();
                 </div>
                 <div class="stat-info">
                     <span class="stat-label">Próximo Horário</span>
-                    <h3 class="stat-number">1 Ativo</h3>
-                    <span class="stat-detail"><i class="fa-solid fa-clock"></i> Hoje às 16:00</span>
+                    <h3 class="stat-number"><?= $contagem['active'] ?> <?= $contagem['active'] === 1 ? 'Ativo' : 'Ativos' ?></h3>
+                    <span class="stat-detail"><i class="fa-solid fa-clock"></i>
+                        <?php if ($proximo): ?>
+                            <?= $proximo->format('Y-m-d') === $agora->format('Y-m-d') ? 'Hoje' : $proximo->format('d/m') ?> às <?= $proximo->format('H:i') ?>
+                        <?php else: ?>
+                            Nenhum horário marcado
+                        <?php endif; ?>
+                    </span>
                 </div>
             </div>
 
@@ -106,171 +186,70 @@ exigirLogin();
                     <i class="fa-solid fa-scissors"></i>
                 </div>
                 <div class="stat-info">
-                    <span class="stat-label">Cortes Realizados</span>
-                    <h3 class="stat-number">6 Cortes</h3>
-                    <span class="stat-detail"><i class="fa-solid fa-trophy"></i> Cliente Fiel</span>
+                    <span class="stat-label">Atendimentos Realizados</span>
+                    <h3 class="stat-number"><?= $concluidos ?> <?= $concluidos === 1 ? 'Atendimento' : 'Atendimentos' ?></h3>
+                    <span class="stat-detail"><i class="fa-solid fa-check"></i> Já concluídos</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-icon">
-                    <i class="fa-regular fa-star"></i>
+                    <i class="fa-regular fa-calendar-days"></i>
                 </div>
                 <div class="stat-info">
-                    <span class="stat-label">Avaliação</span>
-                    <h3 class="stat-number">5.0 ★</h3>
-                    <span class="stat-detail"><i class="fa-solid fa-check"></i> Experiência Na Régua</span>
+                    <span class="stat-label">Total de Agendamentos</span>
+                    <h3 class="stat-number"><?= $total ?></h3>
+                    <span class="stat-detail"><i class="fa-solid fa-list"></i> Contando todos os status</span>
                 </div>
             </div>
         </div>
 
-        <!-- Abas de Filtro -->
+        <!-- Abas de Filtro (os números ainda são fixos) -->
         <div class="appointments-tabs-nav">
             <button type="button" class="tab-btn active" onclick="filterAppointments('active', this)">
-                <i class="fa-regular fa-calendar-check"></i> Próximos Horários <span class="tab-counter">1</span>
+                <i class="fa-regular fa-calendar-check"></i> Próximos Horários <span class="tab-counter"><?= $contagem['active'] ?></span>
             </button>
             <button type="button" class="tab-btn" onclick="filterAppointments('history', this)">
-                <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Cortes <span class="tab-counter">3</span>
+                <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Cortes <span class="tab-counter"><?= $contagem['history'] ?></span>
             </button>
             <button type="button" class="tab-btn" onclick="filterAppointments('canceled', this)">
-                <i class="fa-regular fa-calendar-xmark"></i> Cancelados <span class="tab-counter">0</span>
+                <i class="fa-regular fa-calendar-xmark"></i> Cancelados <span class="tab-counter"><?= $contagem['canceled'] ?></span>
             </button>
         </div>
 
         <!-- Listagem de Agendamentos -->
         <div class="appointments-list" id="appointmentsList">
-            <!-- AGENDAMENTO ATIVO / PRÓXIMO -->
-            <div class="appointment-item-card confirmed appt-item" data-type="active">
-                <div class="appointment-date-badge">
-                    <span class="date-badge-day">29</span>
-                    <span class="date-badge-month">Outubro</span>
-                    <span class="date-badge-time"><i class="fa-regular fa-clock"></i> 16:00</span>
-                </div>
-
-                <div class="appointment-details">
-                    <div class="appointment-header-row">
-                        <h2 class="appointment-service-title">Combo Cabelo + Barba Na Régua</h2>
-                        <span class="status-badge status-confirmed">Confirmado</span>
+            <?php foreach ($agendamentos as $ag): ?>
+                <?php
+                $inicio = new DateTime($ag['inicio']);
+                $tipo = $abas[$ag['status']] ?? 'active';
+                ?>
+                <div class="appointment-item-card appt-item" data-type="<?= $tipo ?>"
+                    style="<?= $tipo !== 'active' ? 'display: none;' : '' ?>">
+                    <div class="appointment-date-badge">
+                        <span class="date-badge-day"><?= $inicio->format('d') ?></span>
+                        <span class="date-badge-month"><?= $meses[(int) $inicio->format('n')] ?></span>
+                        <span class="date-badge-time"><i class="fa-regular fa-clock"></i> <?= $inicio->format('H:i') ?></span>
                     </div>
 
-                    <div class="appointment-meta-info">
-                        <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Lucas Silva</span>
-                        <span class="meta-item"><i class="fa-regular fa-hourglass-half"></i> Duração: 1h 15min</span>
-                        <span class="meta-item"><i class="fa-solid fa-location-dot"></i> Cadeira 02 • Na Régua
-                            Barber</span>
+                    <div class="appointment-details">
+                        <div class="appointment-header-row">
+                            <h2 class="appointment-service-title"><?= htmlspecialchars($ag['servicos']) ?></h2>
+                            <span class="status-badge status-<?= $classesStatus[$ag['status']] ?? 'unknown' ?>"><?= $rotulos[$ag['status']] ?? htmlspecialchars($ag['status']) ?></span>
+                        </div>
+
+                        <div class="appointment-meta-info">
+                            <span class="meta-item"><i class="fa-regular fa-hourglass-half"></i> Duração: <?= formatarDuracao((int) $ag['duracao']) ?></span>
+                        </div>
+
+                        <span class="appointment-price-tag">R$ <?= number_format((float) $ag['total'], 2, ',', '.') ?></span>
                     </div>
-
-                    <span class="appointment-price-tag">R$ 70,00</span>
                 </div>
+            <?php endforeach; ?>
 
-                <div class="appointment-actions">
-                    <a href="agendar.php" class="btn-action-reschedule">
-                        <i class="fa-regular fa-calendar-days"></i> Reagendar
-                    </a>
-                    <button type="button" class="btn-action-cancel" onclick="cancelAppointment(this)">
-                        <i class="fa-regular fa-circle-xmark"></i> Cancelar
-                    </button>
-                </div>
-            </div>
-
-            <!-- HISTÓRICO 1 -->
-            <div class="appointment-item-card completed appt-item" data-type="history" style="display: none;">
-                <div class="appointment-date-badge">
-                    <span class="date-badge-day">15</span>
-                    <span class="date-badge-month">Outubro</span>
-                    <span class="date-badge-time"><i class="fa-regular fa-clock"></i> 14:30</span>
-                </div>
-
-                <div class="appointment-details">
-                    <div class="appointment-header-row">
-                        <h2 class="appointment-service-title">Corte Masculino Degradê Fade</h2>
-                        <span class="status-badge status-done">Concluído</span>
-                    </div>
-
-                    <div class="appointment-meta-info">
-                        <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Carlos Navalha</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
-                            5.0 (Excelente)</span>
-                    </div>
-
-                    <span class="appointment-price-tag">R$ 45,00</span>
-                </div>
-
-                <div class="appointment-actions">
-                    <a href="agendar.php" class="btn-action-repeat">
-                        <i class="fa-solid fa-rotate-right"></i> Repetir Corte
-                    </a>
-                </div>
-            </div>
-
-            <!-- HISTÓRICO 2 -->
-            <div class="appointment-item-card completed appt-item" data-type="history" style="display: none;">
-                <div class="appointment-date-badge">
-                    <span class="date-badge-day">28</span>
-                    <span class="date-badge-month">Setembro</span>
-                    <span class="date-badge-time"><i class="fa-regular fa-clock"></i> 17:00</span>
-                </div>
-
-                <div class="appointment-details">
-                    <div class="appointment-header-row">
-                        <h2 class="appointment-service-title">Barba Terapia com Toalha Quente</h2>
-                        <span class="status-badge status-done">Concluído</span>
-                    </div>
-
-                    <div class="appointment-meta-info">
-                        <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Carlos Navalha</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
-                            5.0 (Excelente)</span>
-                    </div>
-
-                    <span class="appointment-price-tag">R$ 35,00</span>
-                </div>
-
-                <div class="appointment-actions">
-                    <a href="agendar.php" class="btn-action-repeat">
-                        <i class="fa-solid fa-rotate-right"></i> Repetir Corte
-                    </a>
-                </div>
-            </div>
-
-            <!-- HISTÓRICO 3 -->
-            <div class="appointment-item-card completed appt-item" data-type="history" style="display: none;">
-                <div class="appointment-date-badge">
-                    <span class="date-badge-day">10</span>
-                    <span class="date-badge-month">Setembro</span>
-                    <span class="date-badge-time"><i class="fa-regular fa-clock"></i> 11:00</span>
-                </div>
-
-                <div class="appointment-details">
-                    <div class="appointment-header-row">
-                        <h2 class="appointment-service-title">Combo Cabelo + Barba Na Régua</h2>
-                        <span class="status-badge status-done">Concluído</span>
-                    </div>
-
-                    <div class="appointment-meta-info">
-                        <span class="meta-item"><i class="fa-solid fa-user-check"></i> Barbeiro: Lucas Silva</span>
-                        <span class="meta-item"><i class="fa-solid fa-star" style="color: var(--gold);"></i> Avaliação:
-                            5.0 (Excelente)</span>
-                    </div>
-
-                    <span class="appointment-price-tag">R$ 70,00</span>
-                </div>
-
-                <div class="appointment-actions">
-                    <a href="agendar.php" class="btn-action-repeat">
-                        <i class="fa-solid fa-rotate-right"></i> Repetir Corte
-                    </a>
-                </div>
-            </div>
-
-            <!-- MENSAGEM VAZIA PARA CANCELADOS -->
-            <div id="emptyMessage" style="display: none; text-align: center; padding: 60px 20px;">
-                <i class="fa-regular fa-calendar-check"
-                    style="font-size: 3rem; color: var(--gold); margin-bottom: 16px; display: inline-block;"></i>
-                <p style="font-size: 1.2rem; font-weight: 600; color: var(--text-white);">Nenhum agendamento nesta
-                    categoria.</p>
-                <span style="color: var(--text-gray-muted); font-size: 0.95rem;">Você não possui horários
-                    cancelados.</span>
+            <!-- Mensagem para quando a aba está vazia -->
+            <div id="emptyMessage" class="empty-message">
+                <p>Nenhum agendamento nesta categoria.</p>
             </div>
         </div>
     </main>
