@@ -564,12 +564,19 @@ main {
     display: none;
     text-align: center;
     padding: 60px 20px;
+    border: 1px dashed var(--border-card);
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .empty-message p {
     color: var(--text-white);
     font-size: 1.2rem;
     font-weight: 600;
+}
+
+.appt-item[hidden] {
+    display: none !important;
 }
 
 /* Card Próximo / Ativo */
@@ -803,11 +810,19 @@ main {
     gap: 6px;
 }
 
-.btn-action-cancel:hover {
+.btn-action-cancel:hover:not(:disabled) {
     background: var(--danger);
     color: var(--text-white);
     border-color: var(--danger);
     box-shadow: 0 4px 15px -2px var(--danger-glow);
+}
+
+.btn-action-cancel:disabled,
+.btn-action-cancel.is-loading {
+    opacity: 0.72;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-action-reschedule {
@@ -899,9 +914,24 @@ main {
         gap: 18px;
     }
 
+    .appointment-date-badge {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .appointment-actions {
+        align-items: stretch;
+    }
+
+    .btn-action-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+
     .appointments-tabs-nav {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        padding-bottom: 10px;
     }
 
     .tab-btn {

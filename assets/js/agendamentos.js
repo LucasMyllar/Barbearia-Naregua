@@ -5,40 +5,56 @@
 
 function filterAppointments(type, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
 
     const items = document.querySelectorAll('.appt-item');
     const emptyMsg = document.getElementById('emptyMessage');
     let visibleCount = 0;
 
     items.forEach(item => {
-        if (item.getAttribute('data-type') === type) {
-            item.style.display = 'grid';
-            visibleCount++;
-        } else {
-            item.style.display = 'none';
-        }
+        const shouldShow = item.getAttribute('data-type') === type;
+        item.hidden = !shouldShow;
+        item.style.display = shouldShow ? 'grid' : 'none';
+
+        if (shouldShow) visibleCount++;
     });
 
-    if (visibleCount === 0) {
-        if (emptyMsg) emptyMsg.style.display = 'block';
-    } else {
-        if (emptyMsg) emptyMsg.style.display = 'none';
+    if (emptyMsg) {
+        emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 }
 
-function cancelAppointment(btn) {
-    if (confirm("Deseja realmente cancelar este horário? O cancelamento é gratuito.")) {
-        const card = btn.closest('.appointment-item-card');
-        if (card) {
-            card.style.transition = 'all 0.4s ease';
-            card.style.opacity = '0';
-            card.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                card.remove();
-                alert("Agendamento cancelado com sucesso!");
-            }, 400);
+async function cancelAppointment(btn) {
+    if (!confirm('Deseja realmente cancelar este horário? O cancelamento só é possível até 2 horas antes.')) return;
+
+    const csrfInput = document.querySelector('input[name="csrf_token"]');
+    if (!csrfInput || !btn.dataset.id) {
+        alert('Não foi possível localizar os dados do agendamento.');
+        return;
+    }
+
+    const form = new FormData();
+    form.append('csrf_token', csrfInput.value);
+    form.append('id', btn.dataset.id);
+
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+
+    try {
+        const resposta = await fetch('cancelarAgendamento.php', { method: 'POST', body: form });
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            location.reload();
+            return;
         }
+
+        alert(dados.erro || 'Não foi possível cancelar.');
+    } catch (erro) {
+        alert('Não foi possível cancelar.');
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('is-loading');
     }
 }
 

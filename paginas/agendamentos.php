@@ -9,22 +9,22 @@ $stmt->execute([':cliente' => (int) $_SESSION['id_usuario']]);
 $agendamentos = $stmt->fetchAll();
 
 $abas = [
-    'PENDENTE'   => 'active',
+    'PENDENTE' => 'active',
     'CONFIRMADO' => 'active',
-    'CONCLUIDO'  => 'history',
-    'CANCELADO'  => 'canceled',
+    'CONCLUIDO' => 'history',
+    'CANCELADO' => 'canceled',
 ];
 $rotulos = [
-    'PENDENTE'   => 'Pendente',
+    'PENDENTE' => 'Pendente',
     'CONFIRMADO' => 'Confirmado',
-    'CONCLUIDO'  => 'Concluído',
-    'CANCELADO'  => 'Cancelado',
+    'CONCLUIDO' => 'Concluído',
+    'CANCELADO' => 'Cancelado',
 ];
 $classesStatus = [
-    'PENDENTE'   => 'pending',
+    'PENDENTE' => 'pending',
     'CONFIRMADO' => 'confirmed',
-    'CONCLUIDO'  => 'done',
-    'CANCELADO'  => 'canceled',
+    'CONCLUIDO' => 'done',
+    'CANCELADO' => 'canceled',
 ];
 $meses = [
     1 => 'Janeiro',
@@ -52,8 +52,10 @@ function formatarDuracao(int $minutos): string
 {
     $h = intdiv($minutos, 60);
     $m = $minutos % 60;
-    if ($h === 0) return "$m min";
-    if ($m === 0) return "{$h}h";
+    if ($h === 0)
+        return "$m min";
+    if ($m === 0)
+        return "{$h}h";
     return "{$h}h {$m}min";
 }
 
@@ -170,10 +172,12 @@ $total = count($agendamentos);
                 </div>
                 <div class="stat-info">
                     <span class="stat-label">Próximo Horário</span>
-                    <h3 class="stat-number"><?= $contagem['active'] ?> <?= $contagem['active'] === 1 ? 'Ativo' : 'Ativos' ?></h3>
+                    <h3 class="stat-number"><?= $contagem['active'] ?>
+                        <?= $contagem['active'] === 1 ? 'Ativo' : 'Ativos' ?></h3>
                     <span class="stat-detail"><i class="fa-solid fa-clock"></i>
                         <?php if ($proximo): ?>
-                            <?= $proximo->format('Y-m-d') === $agora->format('Y-m-d') ? 'Hoje' : $proximo->format('d/m') ?> às <?= $proximo->format('H:i') ?>
+                            <?= $proximo->format('Y-m-d') === $agora->format('Y-m-d') ? 'Hoje' : $proximo->format('d/m') ?>
+                            às <?= $proximo->format('H:i') ?>
                         <?php else: ?>
                             Nenhum horário marcado
                         <?php endif; ?>
@@ -187,7 +191,8 @@ $total = count($agendamentos);
                 </div>
                 <div class="stat-info">
                     <span class="stat-label">Atendimentos Realizados</span>
-                    <h3 class="stat-number"><?= $concluidos ?> <?= $concluidos === 1 ? 'Atendimento' : 'Atendimentos' ?></h3>
+                    <h3 class="stat-number"><?= $concluidos ?> <?= $concluidos === 1 ? 'Atendimento' : 'Atendimentos' ?>
+                    </h3>
                     <span class="stat-detail"><i class="fa-solid fa-check"></i> Já concluídos</span>
                 </div>
             </div>
@@ -207,13 +212,16 @@ $total = count($agendamentos);
         <!-- Abas de Filtro (os números ainda são fixos) -->
         <div class="appointments-tabs-nav">
             <button type="button" class="tab-btn active" onclick="filterAppointments('active', this)">
-                <i class="fa-regular fa-calendar-check"></i> Próximos Horários <span class="tab-counter"><?= $contagem['active'] ?></span>
+                <i class="fa-regular fa-calendar-check"></i> Próximos Horários <span
+                    class="tab-counter"><?= $contagem['active'] ?></span>
             </button>
             <button type="button" class="tab-btn" onclick="filterAppointments('history', this)">
-                <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Cortes <span class="tab-counter"><?= $contagem['history'] ?></span>
+                <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Cortes <span
+                    class="tab-counter"><?= $contagem['history'] ?></span>
             </button>
             <button type="button" class="tab-btn" onclick="filterAppointments('canceled', this)">
-                <i class="fa-regular fa-calendar-xmark"></i> Cancelados <span class="tab-counter"><?= $contagem['canceled'] ?></span>
+                <i class="fa-regular fa-calendar-xmark"></i> Cancelados <span
+                    class="tab-counter"><?= $contagem['canceled'] ?></span>
             </button>
         </div>
 
@@ -229,21 +237,33 @@ $total = count($agendamentos);
                     <div class="appointment-date-badge">
                         <span class="date-badge-day"><?= $inicio->format('d') ?></span>
                         <span class="date-badge-month"><?= $meses[(int) $inicio->format('n')] ?></span>
-                        <span class="date-badge-time"><i class="fa-regular fa-clock"></i> <?= $inicio->format('H:i') ?></span>
+                        <span class="date-badge-time"><i class="fa-regular fa-clock"></i>
+                            <?= $inicio->format('H:i') ?></span>
                     </div>
 
                     <div class="appointment-details">
                         <div class="appointment-header-row">
                             <h2 class="appointment-service-title"><?= htmlspecialchars($ag['servicos']) ?></h2>
-                            <span class="status-badge status-<?= $classesStatus[$ag['status']] ?? 'unknown' ?>"><?= $rotulos[$ag['status']] ?? htmlspecialchars($ag['status']) ?></span>
+                            <span
+                                class="status-badge status-<?= $classesStatus[$ag['status']] ?? 'unknown' ?>"><?= $rotulos[$ag['status']] ?? htmlspecialchars($ag['status']) ?></span>
                         </div>
 
                         <div class="appointment-meta-info">
-                            <span class="meta-item"><i class="fa-regular fa-hourglass-half"></i> Duração: <?= formatarDuracao((int) $ag['duracao']) ?></span>
+                            <span class="meta-item"><i class="fa-regular fa-hourglass-half"></i> Duração:
+                                <?= formatarDuracao((int) $ag['duracao']) ?></span>
                         </div>
 
-                        <span class="appointment-price-tag">R$ <?= number_format((float) $ag['total'], 2, ',', '.') ?></span>
+                        <span class="appointment-price-tag">R$
+                            <?= number_format((float) $ag['total'], 2, ',', '.') ?></span>
                     </div>
+                    <?php if (in_array($ag['status'], ['PENDENTE', 'CONFIRMADO'], true)): ?>
+                        <div class="appointment-actions">
+                            <button type="button" class="btn-action-cancel" data-id="<?= (int) $ag['id_agendamento'] ?>"
+                                onclick="cancelAppointment(this)">
+                                <i class="fa-regular fa-circle-xmark"></i> Cancelar
+                            </button>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
