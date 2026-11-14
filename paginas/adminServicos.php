@@ -1,6 +1,20 @@
 ﻿<?php
 require_once __DIR__ . '/../includes/auth.php';
 exigirAdmin();
+
+require_once __DIR__ . '/../config/database.php';
+
+$servicos = $pdo->query('SELECT * FROM app_privado.admin_listar_servicos()')->fetchAll();
+$total = count($servicos);
+
+function formatarDuracao(int $minutos): string
+{
+    $h = intdiv($minutos, 60);
+    $m = $minutos % 60;
+    if ($h === 0) return "$m min";
+    if ($m === 0) return "{$h}h";
+    return "{$h}h {$m}min";
+}
 ?>
 
 <!DOCTYPE html>
@@ -83,8 +97,8 @@ exigirAdmin();
             <div class="admin-header-pill">
                 <div class="admin-avatar">AD</div>
                 <div class="admin-details">
-                    <span class="admin-name">Gestor Na Régua</span>
-                    <span class="admin-role">Administrador Master</span>
+                    <span class="admin-name"><?= htmlspecialchars($_SESSION['nome'] ?? 'Administrador') ?></span>
+                    <span class="admin-role">Administrador</span>
                 </div>
             </div>
         </div>
@@ -99,7 +113,7 @@ exigirAdmin();
                 <p class="page-subtitle">Configure os serviços disponíveis para agendamento, durações estimadas e preços
                     vigentes.</p>
             </div>
-            <button type="button" class="btn-primary-admin" onclick="openModal('modalNewService')">
+            <button type="button" class="btn-primary-admin" onclick="novoServico()">
                 <i class="fa-solid fa-plus"></i> Novo Serviço
             </button>
         </div>
@@ -113,251 +127,97 @@ exigirAdmin();
             </div>
 
             <div style="font-size: 0.88rem; color: var(--text-gray-muted);">
-                Exibindo <strong>5 serviços</strong> cadastrados no catálogo
+                Exibindo <strong><?= $total ?> <?= $total === 1 ? 'serviço' : 'serviços' ?></strong> no catálogo
             </div>
         </div>
 
         <!-- Grade de Cards de Serviços -->
         <div class="admin-cards-grid">
-            <!-- Serviço 1: Combo Na Régua -->
-            <div class="admin-item-card">
-                <div>
-                    <div class="card-item-top">
-                        <div class="item-icon-avatar">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <?php foreach ($servicos as $s): ?>
+                <?php $ativo = in_array($s['ativo'], [true, 't', 1, '1'], true); ?>
+                <div class="admin-item-card"
+                     data-id="<?= (int) $s['id_servico'] ?>"
+                     data-nome="<?= htmlspecialchars($s['nome'], ENT_QUOTES) ?>"
+                     data-descricao="<?= htmlspecialchars((string) ($s['descricao'] ?? ''), ENT_QUOTES) ?>"
+                     data-preco="<?= htmlspecialchars((string) $s['preco'], ENT_QUOTES) ?>"
+                     data-duracao="<?= (int) $s['duracao_minutos'] ?>"
+                     data-ativo="<?= $ativo ? '1' : '0' ?>"
+                     style="<?= $ativo ? '' : 'opacity: 0.6;' ?>">
+                    <div>
+                        <div class="card-item-top">
+                            <div class="item-icon-avatar">
+                                <i class="fa-solid fa-scissors"></i>
+                            </div>
+                            <?php if ($ativo): ?>
+                                <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
+                            <?php else: ?>
+                                <span class="badge-status inactive"><i class="fa-solid fa-circle-pause"></i> Desativado</span>
+                            <?php endif; ?>
                         </div>
-                        <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
+
+                        <div class="item-title-group">
+                            <h3><?= htmlspecialchars($s['nome']) ?></h3>
+                        </div>
+
+                        <p class="item-desc"><?= htmlspecialchars((string) ($s['descricao'] ?? '')) ?></p>
                     </div>
 
-                    <div class="item-title-group">
-                        <h3>Combo Cabelo + Barba Na Régua</h3>
-                    </div>
-
-                    <p class="item-desc">
-                        A experiência completa: corte de cabelo personalizado degradê/social com lavagem especial, barba
-                        esculpida na navalha com toalha quente e massagem facial.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="item-meta-row">
-                        <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 1h 15min de
-                                atendimento</span>
-                            <div class="item-price">R$ 70,00</div>
-                        </div>
-                        <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
-                                title="Pausar ou Ativar Serviço">
-                                <i class="fa-solid fa-pause"></i>
-                            </button>
-                            <button type="button" class="btn-icon-action danger"
-                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Serviço 2: Corte Degradê / Fade -->
-            <div class="admin-item-card">
-                <div>
-                    <div class="card-item-top">
-                        <div class="item-icon-avatar">
-                            <i class="fa-solid fa-scissors"></i>
-                        </div>
-                        <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
-                    </div>
-
-                    <div class="item-title-group">
-                        <h3>Corte Masculino (Fade / Degradê)</h3>
-                    </div>
-
-                    <p class="item-desc">
-                        Corte contemporâneo executado com precisão: fade na navalha, low/mid/high fade, tesoura
-                        clássica, lavagem refrescante e finalização com pomada modeladora.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="item-meta-row">
-                        <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 45 min de atendimento</span>
-                            <div class="item-price">R$ 45,00</div>
-                        </div>
-                        <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
-                                title="Pausar ou Ativar Serviço">
-                                <i class="fa-solid fa-pause"></i>
-                            </button>
-                            <button type="button" class="btn-icon-action danger"
-                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                    <div>
+                        <div class="item-meta-row">
+                            <div>
+                                <span class="item-duration"><i class="fa-regular fa-clock"></i>
+                                    <?= formatarDuracao((int) $s['duracao_minutos']) ?> de atendimento</span>
+                                <div class="item-price">R$ <?= number_format((float) $s['preco'], 2, ',', '.') ?></div>
+                            </div>
+                            <div class="table-actions-group">
+                                <button type="button" class="btn-icon-action" onclick="editarServico(this)" title="Editar serviço">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button type="button" class="btn-icon-action gold" onclick="alternarServico(this)"
+                                    title="<?= $ativo ? 'Desativar serviço' : 'Reativar serviço' ?>">
+                                    <i class="fa-solid <?= $ativo ? 'fa-pause' : 'fa-play' ?>"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Serviço 3: Barba Terapia -->
-            <div class="admin-item-card">
-                <div>
-                    <div class="card-item-top">
-                        <div class="item-icon-avatar">
-                            <i class="fa-solid fa-spray-can-sparkles"></i>
-                        </div>
-                        <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
-                    </div>
-
-                    <div class="item-title-group">
-                        <h3>Barba Completa & Toalha Quente</h3>
-                    </div>
-
-                    <p class="item-desc">
-                        Ritual clássico de barbearia com toalha aromatizada a vapor, óleo pré-barba, navalha afiada,
-                        alinhamento simétrico e bálsamo pós-barba refrescante.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="item-meta-row">
-                        <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 30 min de atendimento</span>
-                            <div class="item-price">R$ 35,00</div>
-                        </div>
-                        <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
-                                title="Pausar ou Ativar Serviço">
-                                <i class="fa-solid fa-pause"></i>
-                            </button>
-                            <button type="button" class="btn-icon-action danger"
-                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Serviço 4: Acabamento & Sobrancelha -->
-            <div class="admin-item-card">
-                <div>
-                    <div class="card-item-top">
-                        <div class="item-icon-avatar">
-                            <i class="fa-solid fa-brush"></i>
-                        </div>
-                        <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
-                    </div>
-
-                    <div class="item-title-group">
-                        <h3>Acabamento de Pezinho & Sobrancelha</h3>
-                    </div>
-
-                    <p class="item-desc">
-                        Manutenção e retoque fino da linha da nuca, contorno frontal e desenho higiênico da sobrancelha
-                        na lâmina ou pinça para manter a postura sempre em dia.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="item-meta-row">
-                        <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 20 min de atendimento</span>
-                            <div class="item-price">R$ 25,00</div>
-                        </div>
-                        <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
-                                title="Pausar ou Ativar Serviço">
-                                <i class="fa-solid fa-pause"></i>
-                            </button>
-                            <button type="button" class="btn-icon-action danger"
-                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Serviço 5: Hidratação Capilar Premium -->
-            <div class="admin-item-card">
-                <div>
-                    <div class="card-item-top">
-                        <div class="item-icon-avatar">
-                            <i class="fa-solid fa-droplet"></i>
-                        </div>
-                        <span class="badge-status active"><i class="fa-solid fa-circle-check"></i> Ativo</span>
-                    </div>
-
-                    <div class="item-title-group">
-                        <h3>Hidratação & Tratamento Capilar</h3>
-                    </div>
-
-                    <p class="item-desc">
-                        Tratamento reconstrutor intensivo com máscara nutritiva premium e ozônio, combatendo
-                        ressecamento e fortalecendo os fios desde a raiz.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="item-meta-row">
-                        <div>
-                            <span class="item-duration"><i class="fa-regular fa-clock"></i> 30 min de atendimento</span>
-                            <div class="item-price">R$ 40,00</div>
-                        </div>
-                        <div class="table-actions-group">
-                            <button type="button" class="btn-icon-action gold" onclick="toggleServiceStatus(this)"
-                                title="Pausar ou Ativar Serviço">
-                                <i class="fa-solid fa-pause"></i>
-                            </button>
-                            <button type="button" class="btn-icon-action danger"
-                                onclick="deleteAdminCard(this, 'serviço')" title="Remover Serviço">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </main>
 
-    <!-- Modal: Novo Serviço -->
+    <!-- Modal: Novo / Editar Serviço -->
     <div class="modal-overlay" id="modalNewService">
         <div class="admin-modal">
             <div class="modal-header">
-                <h3 class="modal-title"><i class="fa-solid fa-scissors"></i> Cadastrar Novo Serviço</h3>
+                <h3 class="modal-title"><i class="fa-solid fa-scissors"></i> <span id="tituloModalServico">Cadastrar Novo Serviço</span></h3>
                 <button type="button" class="btn-close-modal" onclick="closeModal('modalNewService')">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <form id="formNewService">
+            <form id="formServico">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+                <input type="hidden" name="id" value="">
                 <div class="modal-body">
                     <div class="form-grid-2">
                         <div class="form-group full-width">
                             <label class="form-label">Nome do Serviço *</label>
-                            <input type="text" class="form-input" placeholder="Ex: Pigmentação de Barba" required>
+                            <input type="text" name="nome" class="form-input" maxlength="100" placeholder="Ex: Pigmentação de Barba" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Preço (R$) *</label>
-                            <input type="text" class="form-input" placeholder="Ex: 50,00" required>
+                            <input type="text" name="preco" class="form-input" inputmode="decimal" placeholder="Ex: 50,00" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Duração Estimada *</label>
-                            <select class="form-select" required>
-                                <option>20 minutos</option>
-                                <option>30 minutos</option>
-                                <option selected>45 minutos</option>
-                                <option>1 hora</option>
-                                <option>1 hora e 15 minutos</option>
-                            </select>
+                            <label class="form-label">Duração (minutos) *</label>
+                            <input type="number" name="duracao" class="form-input" min="5" max="480" step="5" placeholder="Ex: 45" required>
                         </div>
                         <div class="form-group full-width">
                             <label class="form-label">Descrição Detalhada</label>
-                            <textarea class="form-textarea"
+                            <textarea name="descricao" class="form-textarea" maxlength="1000"
                                 placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
                         </div>
                     </div>
+                    <p id="erroServico"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary-admin"
@@ -369,8 +229,9 @@ exigirAdmin();
         </div>
     </div>
 
-    <!-- Script Geral do Administrador -->
+    <!-- Scripts do Administrador -->
     <script src="../assets/js/admin.js" defer></script>
+    <script src="../assets/js/adminServicos.js" defer></script>
 </body>
 
 </html>
