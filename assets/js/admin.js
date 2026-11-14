@@ -53,6 +53,15 @@ document.addEventListener('click', (e) => {
     }
 });
 
+function syncEmptyTableState() {
+    const rows = document.querySelectorAll('.appointment-row');
+    const emptyRow = document.getElementById('emptyTableMessage');
+    if (!emptyRow) return;
+
+    const visibleCount = Array.from(rows).filter(row => row.style.display !== 'none').length;
+    emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+}
+
 // Filtro de Agendamentos por Status (Tabs)
 function filterAdminAppointments(status, btn) {
     if (btn) {
@@ -86,11 +95,19 @@ function filterAdminAppointments(status, btn) {
 function filterTableBySearch(input, targetSelector) {
     const term = input.value.toLowerCase().trim();
     const rows = document.querySelectorAll(targetSelector);
+    let visibleCount = 0;
 
     rows.forEach(row => {
         const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(term) ? '' : 'none';
+        const matches = text.includes(term);
+        row.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
     });
+
+    const emptyRow = document.getElementById('emptyTableMessage');
+    if (emptyRow) {
+        emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+    }
 }
 
 // Concluir Atendimento
