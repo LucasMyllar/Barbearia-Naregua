@@ -1,8 +1,20 @@
 ﻿<?php
-
 require_once __DIR__ . '/../includes/auth.php';
 exigirLogin();
 
+require_once __DIR__ . '/../config/database.php';
+
+$stmt = $pdo->prepare('SELECT * FROM app_privado.meus_agendamentos(CAST(:id AS integer))');
+$stmt->execute([':id' => (int) $_SESSION['id_usuario']]);
+$todos = $stmt->fetchAll();
+
+$agora = new DateTime();
+$proximos = array_values(array_filter($todos, function ($a) use ($agora) {
+    return in_array($a['status'], ['PENDENTE', 'CONFIRMADO'], true) && new DateTime($a['inicio']) >= $agora;
+}));
+$mostrar = array_slice($proximos, 0, 3);
+
+$primeiroNome = explode(' ', trim($_SESSION['nome'] ?? 'Cliente'))[0];
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +79,7 @@ exigirLogin();
         <div class="header-user-info">
             <div class="header-user-badge">
                 <i class="fa-solid fa-circle-user"></i>
-                <span>Minha Conta</span>
+                <span><?= htmlspecialchars($_SESSION['nome'] ?? 'Minha Conta') ?></span>
             </div>
         </div>
     </header>
@@ -75,7 +87,7 @@ exigirLogin();
     <!-- Conteúdo principal -->
     <main>
         <h1 class="client-name-title">
-            Lucas
+            <?= htmlspecialchars($primeiroNome) ?>
             <span class="client-name-subtitle">Seja bem-vindo(a) ao seu painel exclusivo</span>
         </h1>
 
@@ -83,28 +95,46 @@ exigirLogin();
             <i class="fa-solid fa-calendar-plus"></i> Agendar
         </button>
 
-        <!-- Card de Agendamentos conforme o wireframe -->
+        <!-- Card de Agendamentos -->
         <div class="card-agendamentos">
             <div class="card-agendamentos-header">
                 <h2 class="card-agendamentos-title">
                     <i class="fa-regular fa-calendar-check"></i> Agendamentos
                 </h2>
                 <span class="card-agendamentos-badge">
-                    <i class="fa-regular fa-clock"></i> 0 Pendentes
+                    <i class="fa-regular fa-clock"></i> <?= count($proximos) ?> <?= count($proximos) === 1 ? 'Próximo' : 'Próximos' ?>
                 </span>
             </div>
 
-            <div class="empty-state-content">
-                <div class="empty-icon-box">
-                    <i class="fa-regular fa-calendar-xmark"></i>
+            <?php if (count($mostrar) === 0): ?>
+                <div class="empty-state-content">
+                    <div class="empty-icon-box">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                    </div>
+                    <p class="empty-state-text">Nenhum agendamento realizado até o momento!</p>
+                    <span class="empty-state-desc">Você ainda não possui horários marcados. Escolha o serviço ideal e agende
+                        com nossos melhores profissionais.</span>
+                    <a href="agendar.php" class="btn-schedule-empty">
+                        <i class="fa-solid fa-plus"></i> Fazer Agendamento
+                    </a>
                 </div>
-                <p class="empty-state-text">Nenhum agendamento realizado até o momento!</p>
-                <span class="empty-state-desc">Você ainda não possui horários marcados. Escolha o serviço ideal e agende
-                    com nossos melhores profissionais.</span>
-                <a href="agendar.php" class="btn-schedule-empty">
-                    <i class="fa-solid fa-plus"></i> Fazer Agendamento
-                </a>
-            </div>
+            <?php else: ?>
+                <div style="display: flex; flex-direction: column; gap: 14px; padding: 8px 0;">
+                    <?php foreach ($mostrar as $ag): ?>
+                        <?php $inicio = new DateTime($ag['inicio']); ?>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                            <div>
+                                <strong><?= htmlspecialchars($ag['servicos']) ?></strong><br>
+                                <span><?= $inicio->format('d/m/Y') ?> às <?= $inicio->format('H:i') ?></span>
+                            </div>
+                            <span><?= $ag['status'] === 'CONFIRMADO' ? 'Confirmado' : 'Aguardando confirmação' ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                    <a href="agendamentos.php" class="btn-schedule-empty" style="align-self: flex-start;">
+                        Ver todos os agendamentos
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </main>
 

@@ -1,6 +1,27 @@
 ﻿<?php
 require_once __DIR__ . '/../includes/auth.php';
 exigirLogin();
+
+require_once __DIR__ . '/../config/database.php';
+
+$id = (int) $_SESSION['id_usuario'];
+
+$stmt = $pdo->prepare('SELECT * FROM app_privado.meu_perfil(CAST(:id AS integer))');
+$stmt->execute([':id' => $id]);
+$perfil = $stmt->fetch();
+
+if (!$perfil) {
+    http_response_code(404);
+    exit('Perfil não encontrado.');
+}
+
+$stmt = $pdo->prepare('SELECT status FROM app_privado.meus_agendamentos(CAST(:id AS integer))');
+$stmt->execute([':id' => $id]);
+$status = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$totalAgendamentos = count($status);
+$concluidos = count(array_filter($status, fn($s) => $s === 'CONCLUIDO'));
+$proximos = count(array_filter($status, fn($s) => in_array($s, ['PENDENTE', 'CONFIRMADO'], true)));
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +90,7 @@ exigirLogin();
         <div class="header-user-info">
             <div class="header-user-badge">
                 <i class="fa-solid fa-circle-user"></i>
-                <span>Lucas Silva</span>
+                <span><?= htmlspecialchars($perfil['nome']) ?></span>
             </div>
         </div>
     </header>
@@ -83,38 +104,36 @@ exigirLogin();
                     <div class="profile-avatar">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <button type="button" class="btn-change-avatar" title="Alterar foto">
-                        <i class="fa-solid fa-camera"></i>
-                    </button>
                 </div>
 
                 <div class="profile-identity-details">
-                    <h1>Lucas Silva</h1>
-                    <p><i class="fa-regular fa-envelope"></i> lucas.silva@email.com • <i
-                            class="fa-brands fa-whatsapp"></i> (11) 98765-4321</p>
-                    <span class="profile-member-since">Membro da Na Régua desde Outubro de 2024</span>
+                    <h1><?= htmlspecialchars($perfil['nome']) ?></h1>
+                    <p><i class="fa-regular fa-envelope"></i> <?= htmlspecialchars($perfil['email']) ?>
+                        <?php if (!empty($perfil['telefone'])): ?>
+                            • <i class="fa-brands fa-whatsapp"></i> <?= htmlspecialchars($perfil['telefone']) ?>
+                        <?php endif; ?>
+                    </p>
                 </div>
             </div>
 
             <div class="profile-quick-metrics">
                 <div class="metric-badge">
-                    <span>Total de Cortes</span>
-                    <strong>6</strong>
+                    <span>Agendamentos</span>
+                    <strong><?= $totalAgendamentos ?></strong>
                 </div>
                 <div class="metric-badge">
-                    <span>Pontualidade</span>
-                    <strong>100%</strong>
+                    <span>Concluídos</span>
+                    <strong><?= $concluidos ?></strong>
                 </div>
                 <div class="metric-badge">
-                    <span>Avaliação</span>
-                    <strong>5.0 ★</strong>
+                    <span>Próximos</span>
+                    <strong><?= $proximos ?></strong>
                 </div>
             </div>
         </div>
 
         <!-- Grade de Conteúdo do Perfil -->
         <div class="profile-content-grid">
-            <!-- Coluna da Esquerda: Dados Pessoais & Senha -->
             <div class="profile-forms-column">
 
                 <!-- Seção 1: Dados Cadastrais -->
@@ -125,34 +144,29 @@ exigirLogin();
                         </h2>
                     </div>
 
-                    <form id="formPersonalData">
+                    <form id="formPerfil">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                         <div class="form-grid-2">
                             <div class="form-group full-width">
                                 <label class="form-label" for="profileName">Nome Completo</label>
-                                <input type="text" id="profileName" class="form-input" value="Lucas Silva" required>
+                                <input type="text" id="profileName" name="nome" class="form-input" maxlength="100"
+                                    value="<?= htmlspecialchars($perfil['nome'], ENT_QUOTES) ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label" for="profileEmail">E-mail</label>
-                                <input type="email" id="profileEmail" class="form-input" value="lucas.silva@email.com"
-                                    required>
+                                <label class="form-label" for="profileEmail">E-mail (não pode ser alterado)</label>
+                                <input type="email" id="profileEmail" class="form-input"
+                                    value="<?= htmlspecialchars($perfil['email'], ENT_QUOTES) ?>" disabled>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="profilePhone">Telefone / WhatsApp</label>
-                                <input type="tel" id="profilePhone" class="form-input" value="(11) 98765-4321" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="profileCpf">CPF (Protegido)</label>
-                                <input type="text" id="profileCpf" class="form-input" value="***.456.789-00" disabled>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="profileBirth">Data de Nascimento</label>
-                                <input type="date" id="profileBirth" class="form-input" value="1996-08-15">
+                                <input type="tel" id="profilePhone" name="telefone" class="form-input" maxlength="20"
+                                    value="<?= htmlspecialchars((string) ($perfil['telefone'] ?? ''), ENT_QUOTES) ?>">
                             </div>
                         </div>
+
+                        <p id="msgPerfil"></p>
 
                         <button type="submit" class="btn-save-profile">
                             <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
@@ -168,26 +182,29 @@ exigirLogin();
                         </h2>
                     </div>
 
-                    <form id="formPassword">
+                    <form id="formSenha">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                         <div class="form-grid-2">
                             <div class="form-group full-width">
                                 <label class="form-label" for="currentPassword">Senha Atual</label>
-                                <input type="password" id="currentPassword" class="form-input" placeholder="••••••••"
-                                    required>
+                                <input type="password" id="currentPassword" name="atual" class="form-input"
+                                    placeholder="••••••••" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="newPassword">Nova Senha</label>
-                                <input type="password" id="newPassword" class="form-input"
-                                    placeholder="Nova senha (mínimo 6 caracteres)" required>
+                                <input type="password" id="newPassword" name="nova" class="form-input"
+                                    placeholder="Mínimo 8 caracteres" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="confirmPassword">Confirmar Nova Senha</label>
-                                <input type="password" id="confirmPassword" class="form-input"
+                                <input type="password" id="confirmPassword" name="confirmar" class="form-input"
                                     placeholder="Repita a nova senha" required>
                             </div>
                         </div>
+
+                        <p id="msgSenha"></p>
 
                         <button type="submit" class="btn-save-profile">
                             <i class="fa-solid fa-key"></i> Atualizar Senha
@@ -199,8 +216,9 @@ exigirLogin();
         </div>
     </main>
 
-    <!-- Script de Perfil -->
+    <!-- Scripts de Perfil -->
     <script src="../assets/js/perfil.js" defer></script>
+    <script src="../assets/js/perfilAcoes.js" defer></script>
 </body>
 
 </html>
