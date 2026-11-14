@@ -65,7 +65,7 @@ function linkWhatsapp(?string $telefone): ?string
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
-<body>
+<body class="admin-appointments-page">
     <!-- Barra Lateral do Admin -->
     <section class="sidebar">
         <div class="sidebar-brand">
@@ -158,9 +158,10 @@ function linkWhatsapp(?string $telefone): ?string
             </div>
 
             <div class="toolbar-right">
-                <div class="search-box" style="width: 320px;">
+                <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" class="search-input" placeholder="Buscar por cliente, serviço ou fone..."
+                        aria-label="Buscar agendamentos por cliente, serviço ou telefone"
                         oninput="filterTableBySearch(this, '.appointment-row')">
                 </div>
             </div>
@@ -191,10 +192,10 @@ function linkWhatsapp(?string $telefone): ?string
                             ?>
                             <tr class="appointment-row" data-status="<?= $classe ?>">
                                 <td>
-                                    <strong style="color: var(--gold); display: block;">
+                                    <strong class="appointment-date">
                                         <?= $ehHoje ? 'Hoje' : $inicio->format('d/m/Y') ?> às <?= $inicio->format('H:i') ?>
                                     </strong>
-                                    <span style="font-size: 0.75rem; color: var(--text-dim);"><?= $inicio->format('d/m/Y') ?></span>
+                                    <span class="appointment-date-full"><?= $inicio->format('d/m/Y') ?></span>
                                 </td>
                                 <td>
                                     <div class="table-client-cell">
@@ -207,12 +208,12 @@ function linkWhatsapp(?string $telefone): ?string
                                 </td>
                                 <td><?= htmlspecialchars($ag['servicos']) ?></td>
                                 <td><?= formatarDuracao((int) $ag['duracao']) ?></td>
-                                <td><strong style="color: var(--text-white);">R$ <?= number_format((float) $ag['total'], 2, ',', '.') ?></strong></td>
+                                <td><strong class="appointment-price">R$ <?= number_format((float) $ag['total'], 2, ',', '.') ?></strong></td>
                                 <td>
                                     <span class="badge-status <?= $classe ?>"><i class="<?= $icone ?>"></i> <?= htmlspecialchars($rotulo) ?></span>
                                 </td>
-                                <td style="text-align: right;">
-                                    <div class="table-actions-group" style="justify-content: flex-end;">
+                                <td class="appointment-actions-cell">
+                                    <div class="table-actions-group">
                                         <?php if ($zap): ?>
                                             <a href="<?= htmlspecialchars($zap) ?>" target="_blank" rel="noopener"
                                                 class="btn-icon-action whatsapp" title="Conversar no WhatsApp">

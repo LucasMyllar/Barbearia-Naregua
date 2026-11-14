@@ -1352,9 +1352,6 @@ main {
         grid-template-columns: 1fr;
     }
 
-    .table-actions-group {
-        justify-content: flex-start !important;
-    }
 }
 
 @media (max-width: 640px) {
@@ -1376,5 +1373,174 @@ main {
 
     .admin-table th {
         padding: 12px 14px;
+    }
+}
+
+/* Ajustes específicos da gestão de agendamentos */
+.admin-appointments-page main {
+    gap: 24px;
+}
+
+.admin-appointments-page .page-title {
+    position: relative;
+    padding-left: 16px;
+}
+
+.admin-appointments-page .page-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 3px;
+    bottom: 3px;
+    width: 4px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+}
+
+.admin-appointments-page .admin-toolbar {
+    background: linear-gradient(145deg, rgba(23, 28, 40, 0.96), rgba(18, 22, 34, 0.96));
+    border-color: rgba(229, 169, 60, 0.16);
+}
+
+.admin-appointments-page .toolbar-left {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.admin-appointments-page .toolbar-right {
+    flex: 0 1 360px;
+    justify-content: flex-end;
+}
+
+.admin-appointments-page .search-box {
+    width: 100%;
+}
+
+.admin-appointments-page .filter-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-dim) transparent;
+}
+
+.admin-appointments-page .filter-tab-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.admin-appointments-page .admin-table-responsive {
+    max-height: min(68vh, 760px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-dim) var(--bg-card);
+}
+
+.admin-appointments-page .admin-table {
+    min-width: 1040px;
+}
+
+.admin-appointments-page .admin-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #171c28;
+    white-space: nowrap;
+}
+
+.admin-appointments-page .admin-table td {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.admin-appointments-page .appointment-row:hover {
+    background: linear-gradient(90deg, rgba(229, 169, 60, 0.055), rgba(229, 169, 60, 0.015));
+}
+
+.admin-appointments-page .appointment-date {
+    display: block;
+    color: var(--gold-light);
+    white-space: nowrap;
+}
+
+.admin-appointments-page .appointment-date-full {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.admin-appointments-page .table-client-avatar {
+    flex: 0 0 38px;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.14), rgba(229, 169, 60, 0.03));
+}
+
+.admin-appointments-page .table-client-info strong,
+.admin-appointments-page .table-client-info span {
+    overflow-wrap: anywhere;
+}
+
+.admin-appointments-page .appointment-price {
+    color: var(--text-white);
+    white-space: nowrap;
+}
+
+.admin-appointments-page .appointment-actions-cell {
+    text-align: right;
+}
+
+.admin-appointments-page .table-actions-group {
+    justify-content: flex-end;
+}
+
+.admin-appointments-page .btn-icon-action {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+}
+
+.admin-appointments-page #emptyTableMessage td {
+    padding: 56px 24px;
+    color: var(--text-gray-muted);
+}
+
+.admin-appointments-page #emptyTableMessage i {
+    display: block;
+    margin-bottom: 16px;
+    color: var(--gold);
+    font-size: 2.2rem;
+}
+
+.admin-appointments-page #emptyTableMessage p {
+    color: var(--text-white);
+    font-weight: 600;
+}
+
+@media (max-width: 960px) {
+    .admin-appointments-page .toolbar-right {
+        flex: 1 1 100%;
+    }
+
+    .admin-appointments-page .admin-table-responsive {
+        max-height: 72vh;
+    }
+
+    .admin-appointments-page .table-actions-group {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-appointments-page main {
+        gap: 18px;
+    }
+
+    .admin-appointments-page .admin-toolbar {
+        padding: 12px;
+    }
+
+    .admin-appointments-page .filter-tabs {
+        border-radius: var(--radius-lg);
+    }
+
+    .admin-appointments-page .filter-tab-btn {
+        padding: 8px 13px;
     }
 }
