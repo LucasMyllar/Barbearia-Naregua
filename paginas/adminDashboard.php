@@ -1,6 +1,36 @@
 ﻿<?php
 require_once __DIR__ . '/../includes/auth.php';
 exigirAdmin();
+
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+$todos = $pdo->query('SELECT * FROM app_privado.admin_listar_agendamentos()')->fetchAll();
+
+$hoje = (new DateTime('today'))->format('Y-m-d');
+
+$deHoje = array_values(array_filter($todos, fn($a) => substr($a['inicio'], 0, 10) === $hoje));
+usort($deHoje, fn($a, $b) => strcmp($a['inicio'], $b['inicio']));
+
+$ativosHoje = 0;
+$concluidosHoje = 0;
+$faturamentoHoje = 0.0;
+
+foreach ($deHoje as $a) {
+    if ($a['status'] !== 'CANCELADO') {
+        $ativosHoje++;
+    }
+    if ($a['status'] === 'CONCLUIDO') {
+        $concluidosHoje++;
+        $faturamentoHoje += (float) $a['total'];
+    }
+}
+
+$pendentesGeral = count(array_filter($todos, fn($a) => $a['status'] === 'PENDENTE'));
+
+$diasSemana = [1 => 'Segunda-feira', 2 => 'Terça-feira', 3 => 'Quarta-feira', 4 => 'Quinta-feira',
+               5 => 'Sexta-feira', 6 => 'Sábado', 7 => 'Domingo'];
+$nomeDia = $diasSemana[(int) (new DateTime('today'))->format('N')];
 ?>
 
 <!DOCTYPE html>
@@ -83,8 +113,8 @@ exigirAdmin();
             <div class="admin-header-pill">
                 <div class="admin-avatar">AD</div>
                 <div class="admin-details">
-                    <span class="admin-name">Gestor Na Régua</span>
-                    <span class="admin-role">Administrador Master</span>
+                    <span class="admin-name"><?= htmlspecialchars($_SESSION['nome'] ?? 'Administrador') ?></span>
+                    <span class="admin-role">Administrador</span>
                 </div>
             </div>
         </div>
@@ -96,16 +126,15 @@ exigirAdmin();
         <div class="page-header-row">
             <div>
                 <h1 class="page-title">Visão Geral da Barbearia</h1>
-                <p class="page-subtitle">Acompanhe métricas em tempo real, atendimentos do dia e performance do salão.
-                </p>
+                <p class="page-subtitle">Acompanhe os atendimentos do dia e o que precisa da sua atenção.</p>
             </div>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <button type="button" class="btn-primary-admin" onclick="openModal('modalNewAppointment')">
-                    <i class="fa-solid fa-plus"></i> Novo Agendamento
-                </button>
-                <button type="button" class="btn-secondary-admin" onclick="openModal('modalNewService')">
-                    <i class="fa-solid fa-scissors"></i> Novo Serviço
-                </button>
+                <a href="adminAgendamentos.php" class="btn-primary-admin">
+                    <i class="fa-regular fa-calendar-days"></i> Gerenciar Agendamentos
+                </a>
+                <a href="adminServicos.php" class="btn-secondary-admin">
+                    <i class="fa-solid fa-scissors"></i> Gerenciar Serviços
+                </a>
             </div>
         </div>
 
@@ -117,8 +146,7 @@ exigirAdmin();
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Agendamentos Hoje</span>
-                    <h3 class="kpi-value">14</h3>
-                    <span class="kpi-badge positive"><i class="fa-solid fa-arrow-trend-up"></i> +25% vs média</span>
+                    <h3 class="kpi-value"><?= $ativosHoje ?></h3>
                 </div>
             </div>
 
@@ -127,9 +155,8 @@ exigirAdmin();
                     <i class="fa-solid fa-brazilian-real-sign"></i>
                 </div>
                 <div class="kpi-info">
-                    <span class="kpi-label">Faturamento Hoje</span>
-                    <h3 class="kpi-value">R$ 890,00</h3>
-                    <span class="kpi-badge positive"><i class="fa-solid fa-chart-pie"></i> 90% da meta diária</span>
+                    <span class="kpi-label">Faturamento Hoje (concluídos)</span>
+                    <h3 class="kpi-value">R$ <?= number_format($faturamentoHoje, 2, ',', '.') ?></h3>
                 </div>
             </div>
 
@@ -139,19 +166,17 @@ exigirAdmin();
                 </div>
                 <div class="kpi-info">
                     <span class="kpi-label">Atendimentos Finalizados</span>
-                    <h3 class="kpi-value">8 / 14</h3>
-                    <span class="kpi-badge info"><i class="fa-solid fa-clock"></i> 6 restantes hoje</span>
+                    <h3 class="kpi-value"><?= $concluidosHoje ?> / <?= $ativosHoje ?></h3>
                 </div>
             </div>
 
             <div class="kpi-card">
                 <div class="kpi-icon-box">
-                    <i class="fa-solid fa-chart-simple"></i>
+                    <i class="fa-regular fa-hourglass-half"></i>
                 </div>
                 <div class="kpi-info">
-                    <span class="kpi-label">Taxa de Ocupação</span>
-                    <h3 class="kpi-value">85%</h3>
-                    <span class="kpi-badge positive"><i class="fa-solid fa-fire"></i> Alta procura hoje</span>
+                    <span class="kpi-label">Aguardando Confirmação</span>
+                    <h3 class="kpi-value"><?= $pendentesGeral ?></h3>
                 </div>
             </div>
         </div>
@@ -160,7 +185,7 @@ exigirAdmin();
         <div class="admin-table-card">
             <div class="table-card-header">
                 <h2 class="table-card-title">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Agenda de Hoje (Quarta-feira)
+                    <i class="fa-solid fa-clock-rotate-left"></i> Agenda de Hoje (<?= $nomeDia ?>)
                 </h2>
                 <a href="adminAgendamentos.php" class="btn-secondary-admin"
                     style="font-size: 0.82rem; padding: 6px 16px;">
@@ -174,245 +199,58 @@ exigirAdmin();
                         <tr>
                             <th>Cliente</th>
                             <th>Serviço</th>
-                            <th>Barbeiro</th>
                             <th>Horário</th>
                             <th>Valor</th>
                             <th>Status</th>
-                            <th style="text-align: right;">Ações</th>
+                            <th style="text-align: right;">Contato</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="appointment-row" data-status="in-progress">
-                            <td>
-                                <div class="table-client-cell">
-                                    <div class="table-client-avatar">LS</div>
-                                    <div class="table-client-info">
-                                        <strong>Lucas Silva</strong>
-                                        <span>(11) 98765-4321</span>
+                        <?php foreach ($deHoje as $ag): ?>
+                            <?php
+                                [$classe, $rotulo, $icone] = statusAdmin($ag['status']);
+                                $inicio = new DateTime($ag['inicio']);
+                                $zap = linkWhatsapp($ag['telefone']);
+                            ?>
+                            <tr class="appointment-row" data-status="<?= $classe ?>">
+                                <td>
+                                    <div class="table-client-cell">
+                                        <div class="table-client-avatar"><?= htmlspecialchars(iniciais($ag['cliente'])) ?></div>
+                                        <div class="table-client-info">
+                                            <strong><?= htmlspecialchars($ag['cliente']) ?></strong>
+                                            <span><?= htmlspecialchars($ag['telefone'] ?? $ag['email']) ?></span>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>Combo Cabelo + Barba Na Régua</td>
-                            <td>Carlos Navalha</td>
-                            <td><strong style="color: var(--gold);">16:00</strong> (Em atendimento)</td>
-                            <td><strong>R$ 70,00</strong></td>
-                            <td><span class="badge-status in-progress"><i class="fa-solid fa-spinner fa-spin"></i> Em
-                                    Cadeira</span></td>
-                            <td style="text-align: right;">
-                                <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511987654321" target="_blank"
-                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button type="button" class="btn-icon-action success"
-                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button type="button" class="btn-icon-action danger"
-                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                                <td><?= htmlspecialchars($ag['servicos']) ?></td>
+                                <td><strong style="color: var(--gold);"><?= $inicio->format('H:i') ?></strong> (<?= formatarDuracao((int) $ag['duracao']) ?>)</td>
+                                <td><strong>R$ <?= number_format((float) $ag['total'], 2, ',', '.') ?></strong></td>
+                                <td><span class="badge-status <?= $classe ?>"><i class="<?= $icone ?>"></i> <?= htmlspecialchars($rotulo) ?></span></td>
+                                <td style="text-align: right;">
+                                    <div class="table-actions-group" style="justify-content: flex-end;">
+                                        <?php if ($zap): ?>
+                                            <a href="<?= htmlspecialchars($zap) ?>" target="_blank" rel="noopener"
+                                                class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
+                                                <i class="fa-brands fa-whatsapp"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
 
-                        <tr class="appointment-row" data-status="confirmed">
-                            <td>
-                                <div class="table-client-cell">
-                                    <div class="table-client-avatar">MO</div>
-                                    <div class="table-client-info">
-                                        <strong>Matheus Oliveira</strong>
-                                        <span>(11) 97123-8899</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Corte Masculino (Fade Navalhado)</td>
-                            <td>Lucas Silva (Fade Master)</td>
-                            <td><strong style="color: var(--text-white);">17:00</strong></td>
-                            <td><strong>R$ 45,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
-                                    Confirmado</span></td>
-                            <td style="text-align: right;">
-                                <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511971238899" target="_blank"
-                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button type="button" class="btn-icon-action success"
-                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button type="button" class="btn-icon-action danger"
-                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr class="appointment-row" data-status="confirmed">
-                            <td>
-                                <div class="table-client-cell">
-                                    <div class="table-client-avatar">RA</div>
-                                    <div class="table-client-info">
-                                        <strong>Rafael Andrade</strong>
-                                        <span>(11) 96544-2211</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Barba Terapia Completa & Toalha Quente</td>
-                            <td>Carlos Navalha</td>
-                            <td><strong style="color: var(--text-white);">17:45</strong></td>
-                            <td><strong>R$ 35,00</strong></td>
-                            <td><span class="badge-status confirmed"><i class="fa-regular fa-clock"></i>
-                                    Confirmado</span></td>
-                            <td style="text-align: right;">
-                                <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511965442211" target="_blank"
-                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <button type="button" class="btn-icon-action success"
-                                        onclick="concludeAppointment(this)" title="Concluir Atendimento">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button type="button" class="btn-icon-action danger"
-                                        onclick="cancelAdminAppointment(this)" title="Cancelar">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr class="appointment-row" data-status="completed">
-                            <td>
-                                <div class="table-client-cell">
-                                    <div class="table-client-avatar">GC</div>
-                                    <div class="table-client-info">
-                                        <strong>Gabriel Costa</strong>
-                                        <span>(11) 95555-1234</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Corte Degradê + Acabamento</td>
-                            <td>Lucas Silva (Fade Master)</td>
-                            <td><strong style="color: var(--text-dim);">14:30</strong></td>
-                            <td><strong>R$ 45,00</strong></td>
-                            <td><span class="badge-status completed"><i class="fa-solid fa-check"></i> Concluído</span>
-                            </td>
-                            <td style="text-align: right;">
-                                <div class="table-actions-group" style="justify-content: flex-end;">
-                                    <a href="https://wa.me/5511955551234" target="_blank"
-                                        class="btn-icon-action whatsapp" title="Conversar no WhatsApp">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </a>
-                                    <span style="font-size: 0.8rem; color: var(--success);"><i
-                                            class="fa-solid fa-check-double"></i> Pago</span>
-                                </div>
-                            </td>
-                        </tr>
+                        <?php if (count($deHoje) === 0): ?>
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">
+                                    <p style="color: var(--text-white); font-weight: 600;">Nenhum agendamento para hoje.</p>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </main>
-
-    <!-- Modal 1: Novo Agendamento Presencial / Manual -->
-    <div class="modal-overlay" id="modalNewAppointment">
-        <div class="admin-modal">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fa-solid fa-calendar-plus"></i> Novo Agendamento</h3>
-                <button type="button" class="btn-close-modal" onclick="closeModal('modalNewAppointment')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form id="formNewAppointment">
-                <div class="modal-body">
-                    <div class="form-grid-2">
-                        <div class="form-group full-width">
-                            <label class="form-label">Nome do Cliente *</label>
-                            <input type="text" class="form-input" placeholder="Ex: Felipe Santos" required>
-                        </div>
-                        <div class="form-group full-width">
-                            <label class="form-label">WhatsApp / Telefone *</label>
-                            <input type="tel" class="form-input" placeholder="(11) 90000-0000" required>
-                        </div>
-                        <div class="form-group full-width">
-                            <label class="form-label">Serviço Desejado *</label>
-                            <select class="form-select" required>
-                                <option value="">Selecione o serviço</option>
-                                <option>Combo Cabelo + Barba Na Régua (R$ 70,00)</option>
-                                <option>Corte Masculino Degradê / Fade (R$ 45,00)</option>
-                                <option>Barba Completa & Toalha Quente (R$ 35,00)</option>
-                                <option>Acabamento & Sobrancelha (R$ 25,00)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Data *</label>
-                            <input type="date" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Horário *</label>
-                            <input type="time" class="form-input" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin"
-                        onclick="closeModal('modalNewAppointment')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-check"></i> Agendar
-                        Cliente</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal 2: Novo Serviço -->
-    <div class="modal-overlay" id="modalNewService">
-        <div class="admin-modal">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fa-solid fa-scissors"></i> Cadastrar Novo Serviço</h3>
-                <button type="button" class="btn-close-modal" onclick="closeModal('modalNewService')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form id="formNewService">
-                <div class="modal-body">
-                    <div class="form-grid-2">
-                        <div class="form-group full-width">
-                            <label class="form-label">Nome do Serviço *</label>
-                            <input type="text" class="form-input" placeholder="Ex: Pigmentação de Barba" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Preço (R$) *</label>
-                            <input type="text" class="form-input" placeholder="Ex: 50,00" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Duração Estimada *</label>
-                            <select class="form-select" required>
-                                <option>20 minutos</option>
-                                <option>30 minutos</option>
-                                <option selected>45 minutos</option>
-                                <option>1 hora</option>
-                                <option>1 hora e 15 minutos</option>
-                            </select>
-                        </div>
-                        <div class="form-group full-width">
-                            <label class="form-label">Descrição Detalhada</label>
-                            <textarea class="form-textarea"
-                                placeholder="Descreva os diferenciais e o que inclui o serviço..."></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary-admin"
-                        onclick="closeModal('modalNewService')">Cancelar</button>
-                    <button type="submit" class="btn-primary-admin"><i class="fa-solid fa-floppy-disk"></i> Salvar
-                        Serviço</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Script Geral do Administrador -->
     <script src="../assets/js/admin.js" defer></script>
